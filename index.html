@@ -1,0 +1,2024 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MB Engenharia · Dimensionamento de Fundações de Reservatórios Metálicos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --preto: #111110;
+  --preto-2: #1b1b19;
+  --preto-card: #242422;
+  --amarelo: #E8B820;
+  --amarelo-d: #c99c12;
+  --amarelo-bg: #fdf8e9;
+  --papel: #f4f2ec;
+  --papel-2: #ffffff;
+  --tinta: #1a1a18;
+  --tinta-2: #63625b;
+  --tinta-muted: #8c897f;
+  --linha: #e2dfd4;
+  --linha-2: #cdc9bd;
+  --ok: #1c7a45;
+  --ok-bg: #e7f4ec;
+  --ok-bd: #bfe3cd;
+  --alerta: #9a6a05;
+  --alerta-bg: #fbf1d4;
+  --alerta-bd: #ecd58f;
+  --perigo: #b3261e;
+  --perigo-bg: #fce8e6;
+  --perigo-bd: #f5b7b1;
+  --azul-eng: #1e4b7a;
+  --azul-bg: #edf3f8;
+  --sombra: 0 1px 2px rgba(17,17,16,.04), 0 10px 26px rgba(17,17,16,.06);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.mono {
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -.01em; }
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+
+/* Header Top */
+header.top { background: var(--preto); color: #fff; }
+.top-in {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  max-width: 1280px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.logo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #232320;
+  border: 1px solid #3c3c36;
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+.logo-icon {
+  width: 22px;
+  height: 22px;
+  background: var(--amarelo);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--preto);
+}
+.brand-name { font-weight: 700; font-size: 14px; letter-spacing: .02em; }
+.top-tag {
+  margin-left: auto;
+  font-size: 12px;
+  color: #9d9b92;
+  text-align: right;
+  letter-spacing: .03em;
+}
+.top-tag b { color: var(--amarelo); }
+
+/* Hero Banner */
+.hero { background: var(--preto-2); color: #fff; border-top: 2px solid var(--amarelo); }
+.hero-in { padding: 26px 20px 28px; max-width: 1280px; margin: 0 auto; }
+.eyebrow {
+  font-size: 11.5px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--amarelo);
+  font-weight: 700;
+}
+.hero h1 {
+  font-size: clamp(24px, 3.5vw, 38px);
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 8px 0 6px;
+}
+.hero p {
+  margin: 0;
+  color: #c8c6bd;
+  max-width: 78ch;
+  font-size: 14.5px;
+}
+.hero .badges-bar {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.hero .tag-chip {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 12px;
+  color: #a9a79e;
+  border: 1px solid #383833;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.02);
+}
+.hero .tag-chip b { color: #eceada; font-weight: 600; }
+
+/* Presets Bar */
+.presets-card {
+  background: var(--papel-2);
+  border: 1px solid var(--linha);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 20px 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--sombra);
+  flex-wrap: wrap;
+}
+.presets-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--tinta-2);
+  white-space: nowrap;
+}
+.preset-btn {
+  background: var(--papel);
+  border: 1.5px solid var(--linha-2);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tinta);
+  cursor: pointer;
+  transition: all .15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.preset-btn:hover {
+  border-color: var(--preto);
+  background: #fff;
+}
+.preset-btn.active {
+  background: var(--preto);
+  color: #fff;
+  border-color: var(--preto);
+}
+.preset-btn.active .p-pill {
+  background: var(--amarelo);
+  color: var(--preto);
+}
+.p-pill {
+  background: var(--linha-2);
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 700;
+}
+
+/* Layout Grid */
+.split {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 22px;
+  align-items: start;
+}
+@media (max-width: 980px) {
+  .split { grid-template-columns: 1fr; }
+}
+
+/* Cards & Formulários */
+.card {
+  background: var(--papel-2);
+  border: 1px solid var(--linha);
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: var(--sombra);
+  margin-bottom: 20px;
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--linha);
+  padding-bottom: 8px;
+}
+.card-head h3 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--tinta-2);
+  font-weight: 700;
+}
+.card-head .card-tag {
+  font-size: 11.5px;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--azul-eng);
+  background: var(--azul-bg);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.field {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.field label {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--tinta);
+}
+.field label small {
+  display: block;
+  color: var(--tinta-2);
+  font-size: 11.5px;
+  font-weight: 400;
+  margin-top: 1px;
+}
+.inputbox {
+  display: flex;
+  align-items: stretch;
+  border: 1.5px solid var(--linha-2);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  width: 156px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.inputbox:focus-within {
+  border-color: var(--preto);
+  box-shadow: 0 0 0 3px rgba(232, 184, 32, .25);
+}
+.inputbox input, .inputbox select {
+  border: 0;
+  outline: 0;
+  padding: 7px 10px;
+  width: 100%;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
+  background: transparent;
+  color: var(--tinta);
+}
+.inputbox select {
+  text-align: left;
+  cursor: pointer;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+}
+.inputbox .unit {
+  display: flex;
+  align-items: center;
+  padding: 0 9px;
+  background: var(--papel);
+  border-left: 1px solid var(--linha);
+  font-size: 12px;
+  color: var(--tinta-2);
+  font-family: 'IBM Plex Mono', monospace;
+  min-width: 44px;
+  justify-content: center;
+  user-select: none;
+}
+
+/* Tabs do Desenho SVG */
+.draw-card {
+  position: sticky;
+  top: 16px;
+  background: var(--papel-2);
+  border: 1px solid var(--linha);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--sombra);
+}
+.draw-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--linha);
+  padding-bottom: 8px;
+}
+.tab-btn {
+  background: transparent;
+  border: 0;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tinta-2);
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all .15s;
+}
+.tab-btn.active {
+  background: var(--preto);
+  color: #fff;
+}
+.draw-view { display: none; }
+.draw-view.active { display: block; }
+.svg-wrap {
+  width: 100%;
+  background: #faf9f6;
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 8px;
+}
+.svg-wrap svg {
+  width: 100%;
+  height: auto;
+  max-height: 480px;
+  display: block;
+}
+.draw-caption {
+  font-size: 12px;
+  color: var(--tinta-2);
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Painel de Checagens / Status */
+.checks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin: 24px 0;
+}
+.chkcard {
+  border-radius: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--linha);
+  background: var(--papel-2);
+  box-shadow: var(--sombra);
+  transition: transform .1s;
+}
+.chkcard .ct {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--tinta-2);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.chkcard .cv {
+  font-weight: 800;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.chkcard .cmsg {
+  font-size: 12.5px;
+  color: var(--tinta-2);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.chkcard.ok {
+  border-color: var(--ok-bd);
+  background: linear-gradient(0deg, var(--ok-bg), #fff);
+}
+.chkcard.ok .cv { color: var(--ok); }
+.chkcard.warn {
+  border-color: var(--alerta-bd);
+  background: linear-gradient(0deg, var(--alerta-bg), #fff);
+}
+.chkcard.warn .cv { color: var(--alerta); }
+.chkcard.bad {
+  border-color: var(--perigo-bd);
+  background: linear-gradient(0deg, var(--perigo-bg), #fff);
+}
+.chkcard.bad .cv { color: var(--perigo); }
+
+/* Botões de Ação */
+.actions-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 20px 0 28px;
+}
+.btn {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 9px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  padding: 12px 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all .15s ease;
+}
+.btn-dark {
+  background: var(--preto);
+  color: #fff;
+  border-color: var(--preto);
+}
+.btn-dark:hover { background: #000; }
+.btn-gold {
+  background: var(--amarelo);
+  color: var(--preto);
+  border-color: var(--amarelo-d);
+}
+.btn-gold:hover { background: #ffd033; }
+.btn-ghost {
+  background: #fff;
+  color: var(--tinta);
+  border-color: var(--linha-2);
+}
+.btn-ghost:hover { border-color: var(--preto); }
+
+/* Memória de Cálculo */
+.section-title {
+  font-size: 19px;
+  font-weight: 800;
+  margin: 32px 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid var(--linha);
+  padding-bottom: 8px;
+}
+.section-title .pin {
+  width: 9px;
+  height: 9px;
+  background: var(--amarelo);
+  border-radius: 2px;
+}
+.section-title small {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tinta-2);
+}
+
+.mem-block {
+  background: var(--papel-2);
+  border: 1px solid var(--linha);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  box-shadow: var(--sombra);
+}
+.mem-block h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mem-block .ref-chip {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--tinta-2);
+  background: var(--papel);
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 600;
+  border: 1px solid var(--linha);
+}
+.mem-row {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13.5px;
+  margin: 6px 0;
+  color: #2a2a26;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.mem-row .lbl {
+  color: var(--tinta-2);
+  display: inline-block;
+  min-width: 220px;
+}
+.mem-row b.hl {
+  color: var(--preto);
+  background: var(--amarelo);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+.mem-row span.unit {
+  color: var(--tinta-2);
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+/* Tabelas */
+.tbl-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--linha);
+  border-radius: 10px;
+  background: #fff;
+  margin: 10px 0;
+}
+table.mem-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+table.mem-tbl th, table.mem-tbl td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--linha);
+  text-align: left;
+}
+table.mem-tbl th {
+  background: var(--papel);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--tinta-2);
+  font-weight: 700;
+}
+table.mem-tbl td.num, table.mem-tbl th.num {
+  text-align: right;
+  font-family: 'IBM Plex Mono', monospace;
+}
+table.mem-tbl tr:last-child td { border-bottom: 0; }
+
+/* Rodapé */
+footer {
+  border-top: 1px solid var(--linha);
+  margin-top: 48px;
+  padding: 28px 0 54px;
+  color: var(--tinta-2);
+  font-size: 13px;
+}
+.foot-in {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+.foot-in b { color: var(--preto); }
+
+/* Toast */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--preto);
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .25s ease;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0,0,0,.2);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast b { color: var(--amarelo); }
+
+/* Print Styles */
+@media print {
+  header.top, .presets-card, .actions-bar, .draw-tabs, footer, .no-print {
+    display: none !important;
+  }
+  body { background: #fff; font-size: 12pt; color: #000; }
+  .wrap { max-width: 100%; padding: 0; margin: 0; }
+  .split { display: block; }
+  .draw-card { position: static; box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; margin-bottom: 20px; }
+  .card, .chkcard, .mem-block, .tbl-wrap { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+  .hero { background: #fff; color: #000; border-top: none; border-bottom: 2px solid #000; padding: 0 0 15px 0; }
+  .hero h1 { font-size: 22pt; color: #000; }
+  .hero p { color: #333; }
+  .eyebrow { color: #000; }
+  .mem-row b.hl { background: #eee; }
+  .print-header {
+    display: block !important;
+    border-bottom: 2px solid #000;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+}
+.print-header { display: none; }
+</style>
+</head>
+<body>
+
+<!-- Header da Aplicação -->
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <div class="logo-badge">
+        <span class="logo-icon">MB</span>
+        <span class="brand-name">MOURA BARRETTO ENGENHARIA</span>
+      </div>
+    </div>
+    <div class="top-tag">
+      RESPONSÁVEL: <b>ENG. MATEUS MOURA BARRETTO · CREA-BA 051805952-9</b>
+    </div>
+  </div>
+</header>
+
+<!-- Banner Hero -->
+<section class="hero">
+  <div class="hero-in">
+    <div class="eyebrow">Rotina Automatizada de Engenharia Estrutural & Geotécnica</div>
+    <h1>Dimensionamento de Fundações para Reservatórios Metálicos</h1>
+    <p>Cálculo integrado de esforços solicitantes na base (peso da água, estrutura metálica e ação dinâmica do vento NBR 6123), distribuição de reações pelo método de Schiel, dimensionamento geotécnico de estacas (método de Teixeira - NBR 6122) e dimensionamento de blocos de coroamento por bielas e tirantes (NBR 6118).</p>
+    <div class="badges-bar">
+      <span class="tag-chip">Normas: <b>NBR 6118:2023 · NBR 6123:2023 · NBR 6122:2019</b></span>
+      <span class="tag-chip">Obra Alvo: <b>Nova Sede DPT Salvador / BA</b></span>
+      <span class="tag-chip">Solução: <b>Estacas Hélice Contínua Monitoradas Ø40 cm</b></span>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+
+  <!-- Header Exclusivo para Impressão -->
+  <div class="print-header">
+    <table style="width:100%; border:none; font-family:'IBM Plex Mono', monospace;">
+      <tr>
+        <td style="border:none; width:65%;">
+          <b style="font-size:16px;">MOURA BARRETTO ENGENHARIA LTDA</b><br>
+          <small>Rua José Bonifácio, nº 581, Feira de Santana – Bahia | mateus@mmouraengenharia.com</small><br>
+          <b>MEMORIAL DE CÁLCULO ESTRUTURAL E GEOTÉCNICO DE FUNDAÇÃO</b>
+        </td>
+        <td style="border:none; text-align:right; font-size:12px;">
+          Obra: <b>Nova Sede DPT - Salvador / BA</b><br>
+          Proprietário: <b>CONDER / Governo da Bahia</b><br>
+          Responsável: <b>Mateus Moura Barretto - CREA-BA 051805952-9</b><br>
+          Data: <span id="printDate"></span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Presets Rápidos -->
+  <div class="presets-card">
+    <span class="presets-label">Carregar Modelo:</span>
+    <button type="button" class="preset-btn active" id="btnPresetDPT160" onclick="loadPreset('DPT160')">
+      <span>DPT Salvador 160 m³</span>
+      <span class="p-pill">Hélice Ø40</span>
+    </button>
+    <button type="button" class="preset-btn" id="btnPresetDPT100" onclick="loadPreset('DPT100')">
+      <span>DPT Salvador 100 m³</span>
+      <span class="p-pill">Hélice Ø40</span>
+    </button>
+    <button type="button" class="preset-btn" id="btnPresetVITCIE" onclick="loadPreset('VITCIE')">
+      <span>VIT-CIE 143 m³</span>
+      <span class="p-pill">16 Estacas</span>
+    </button>
+    <button type="button" class="preset-btn" id="btnPresetCITCEC" onclick="loadPreset('CITCEC')">
+      <span>CIT-CEC 32 m³</span>
+      <span class="p-pill">Sapata Rasa</span>
+    </button>
+  </div>
+
+  <!-- Painel de Checagens Rápidas (Status Cards) -->
+  <div class="checks-grid">
+    <div class="chkcard" id="cardChkComp">
+      <div class="ct">1. Carga Máx. Compressão (Estaca)</div>
+      <div class="cv" id="txtChkComp">--</div>
+      <div class="cmsg" id="msgChkComp">Verificando estaca mais solicitada...</div>
+    </div>
+    <div class="chkcard" id="cardChkTrac">
+      <div class="ct">2. Estabilidade / Tração (Tanque Vazio)</div>
+      <div class="cv" id="txtChkTrac">--</div>
+      <div class="cmsg" id="msgChkTrac">Verificando alívio com vento máximo...</div>
+    </div>
+    <div class="chkcard" id="cardChkRig">
+      <div class="ct">3. Rigidez do Bloco (Bielas)</div>
+      <div class="cv" id="txtChkRig">--</div>
+      <div class="cmsg" id="msgChkRig">Ângulo da biela de compressão...</div>
+    </div>
+    <div class="chkcard" id="cardChkEsp">
+      <div class="ct">4. Espaçamento entre Estacas</div>
+      <div class="cv" id="txtChkEsp">--</div>
+      <div class="cmsg" id="msgChkEsp">Critério normativo s ≥ 3Ø...</div>
+    </div>
+  </div>
+
+  <!-- Layout Dividido: Parâmetros vs Desenho SVG Reativo -->
+  <div class="split">
+
+    <!-- Coluna Esquerda: Formulários de Entrada -->
+    <div class="col-inputs">
+
+      <!-- Card 1: Geometria do Reservatório Metálico -->
+      <div class="card">
+        <div class="card-head">
+          <h3>1. Geometria da Torre e Fluido</h3>
+          <span class="card-tag">Ações NBR 6120</span>
+        </div>
+        <div class="field">
+          <label>Volume Útil de Água (V)
+            <small>Capacidade nominal reservada</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpVolume" value="160" step="1" oninput="recalc()">
+            <span class="unit">m³</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Diâmetro Externo da Coluna (D)
+            <small>Diâmetro cilíndrico do costado metálico</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpDiametro" value="3.18" step="0.01" oninput="recalc()">
+            <span class="unit">m</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Altura do Costado (H)
+            <small>Altura total da torre metálica acima da base</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpH" value="21.50" step="0.10" oninput="recalc()">
+            <span class="unit">m</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Espessura Média das Chapas (e)
+            <small>Costado calandrado em aço estrutural</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpEspChapa" value="6.35" step="0.05" oninput="recalc()">
+            <span class="unit">mm</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Acréscimo de Peso Próprio (Teto + Escadas)
+            <small>Fundo, teto cônico, barrilete, tubulações e escada</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpPercAcess" value="20" step="1" oninput="recalc()">
+            <span class="unit">%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Ação do Vento (NBR 6123) -->
+      <div class="card">
+        <div class="card-head">
+          <h3>2. Ação do Vento e Tombamento</h3>
+          <span class="card-tag">NBR 6123</span>
+        </div>
+        <div class="field">
+          <label>Velocidade Básica do Vento (V₀)
+            <small>Salvador/BA = 30 m/s conforme isopletas</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpV0" value="30" step="1" oninput="recalc()">
+            <span class="unit">m/s</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Fator Topográfico (S₁)
+            <small>Terreno plano ou suavemente ondulado = 1.0</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpS1" value="1.0" step="0.05" oninput="recalc()">
+            <span class="unit">-</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Fator Rugosidade / Dimensão (S₂)
+            <small>Categoria II/III, Classe B para torre cilíndrica</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpS2" value="1.02" step="0.01" oninput="recalc()">
+            <span class="unit">-</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Fator Estatístico (S₃)
+            <small>Edificações com alto fator de ocupação / utilidade</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpS3" value="1.0" step="0.05" oninput="recalc()">
+            <span class="unit">-</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Coeficiente de Arrasto (Cₐ)
+            <small>Cilindro circular em regime turbulento (0.80 a 1.20)</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpCa" value="0.85" step="0.05" oninput="recalc()">
+            <span class="unit">-</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Excentricidade Acidental de Carga
+            <small>Desaprumo e variação de fluido (e = 0.05 × D)</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpExcPerc" value="5.0" step="0.5" oninput="recalc()">
+            <span class="unit">% D</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Geometria do Bloco e Estacas -->
+      <div class="card">
+        <div class="card-head">
+          <h3>3. Concepção da Fundação</h3>
+          <span class="card-tag">Estacas & Bloco</span>
+        </div>
+        <div class="field">
+          <label>Tipo de Fundação
+            <small>Profunda em estacas ou Superficial direta</small>
+          </label>
+          <div class="inputbox">
+            <select id="selTipoFun" onchange="onTipoFunChange()">
+              <option value="estaca" selected>Profunda (Estacas Hélice Contínua)</option>
+              <option value="superficial">Superficial (Bloco Rígido / Sapata)</option>
+            </select>
+          </div>
+        </div>
+        <div id="grpEstacas">
+          <div class="field">
+            <label>Número de Estacas (n)
+              <small>Arranjo geométrico sob o bloco</small>
+            </label>
+            <div class="inputbox">
+              <select id="selNumEstacas" onchange="recalc()">
+                <option value="4">4 estacas (2 × 2)</option>
+                <option value="5">5 estacas (4 cantos + 1 centro)</option>
+                <option value="8" selected>8 estacas (anel perimetral)</option>
+                <option value="9">9 estacas (3 × 3)</option>
+                <option value="12">12 estacas (4 × 4 sem miolo)</option>
+                <option value="16">16 estacas (4 × 4 completa)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Diâmetro da Estaca (Ø)
+              <small>Equipamento hélice contínua na obra</small>
+            </label>
+            <div class="inputbox">
+              <input type="number" id="inpDiamEstaca" value="40" step="5" oninput="recalc()">
+              <span class="unit">cm</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Espaçamento entre Eixos (s)
+              <small>Recomendado: s ≥ 3Ø = 120 cm</small>
+            </label>
+            <div class="inputbox">
+              <input type="number" id="inpEspacEstacas" value="1.30" step="0.05" oninput="recalc()">
+              <span class="unit">m</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Comprimento da Estaca (L)
+              <small>Profundidade perfurada no terreno</small>
+            </label>
+            <div class="inputbox">
+              <input type="number" id="inpComprEstaca" value="15.0" step="0.5" oninput="recalc()">
+              <span class="unit">m</span>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Lado do Bloco em Planta (B)
+            <small>Largura e comprimento da base quadrada</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpLadoBloco" value="4.20" step="0.10" oninput="recalc()">
+            <span class="unit">m</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Altura do Bloco (h)
+            <small>Espessura para garantir rigidez</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpHBloco" value="1.10" step="0.05" oninput="recalc()">
+            <span class="unit">m</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Cobrimento das Armaduras (c)
+            <small>Classe de agressividade ambiental II/III</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpCobrimento" value="5.0" step="0.5" oninput="recalc()">
+            <span class="unit">cm</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Materiais e Geotecnia -->
+      <div class="card">
+        <div class="card-head">
+          <h3>4. Materiais e Resistências</h3>
+          <span class="card-tag">NBR 6118 / 6122</span>
+        </div>
+        <div class="field">
+          <label>Resistência do Concreto (fck)
+            <small>Bloco e estacas hélice contínua</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpFck" value="30" step="5" oninput="recalc()">
+            <span class="unit">MPa</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Aço Estrutural (fyk)
+            <small>Armaduras passivas CA-50</small>
+          </label>
+          <div class="inputbox">
+            <input type="number" id="inpFyk" value="500" step="50" oninput="recalc()">
+            <span class="unit">MPa</span>
+          </div>
+        </div>
+        <div id="grpGeotEstaca">
+          <div class="field">
+            <label>Capacidade Admissível à Compressão (Padm,c)
+              <small>Método Teixeira (SP-03 DPT / NBR 6122)</small>
+            </label>
+            <div class="inputbox">
+              <input type="number" id="inpPadmC" value="56.5" step="0.5" oninput="recalc()">
+              <span class="unit">tf</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Capacidade Admissível à Tração (Padm,t)
+              <small>70% do atrito lateral / FS = 2.0</small>
+            </label>
+            <div class="inputbox">
+              <input type="number" id="inpPadmT" value="31.6" step="0.5" oninput="recalc()">
+              <span class="unit">tf</span>
+            </div>
+          </div>
+        </div>
+        <div id="grpGeotRasa" style="display:none;">
+          <div class="field">
+            <label>Tensão Admissível do Solo (σadm)
+              <small>Para fundação superficial direta</small>
+            </label>
+            <div class="inputbox">
+              <input type="number" id="inpSigmaAdm" value="1.0" step="0.1" oninput="recalc()">
+              <span class="unit">kgf/cm²</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Coluna Direita: Desenho Gráfico SVG Reativo -->
+    <div class="col-draw">
+      <div class="draw-card">
+        <div class="draw-tabs">
+          <button type="button" class="tab-btn active" id="tabBtnElev" onclick="switchTab('elev')">Elevação da Torre & Vento</button>
+          <button type="button" class="tab-btn" id="tabBtnPlan" onclick="switchTab('plan')">Planta do Bloco & Estacas</button>
+        </div>
+
+        <!-- Vista 1: Elevação do Reservatório e Vento -->
+        <div class="draw-view active" id="viewElev">
+          <div class="svg-wrap">
+            <svg id="svgElev" viewBox="0 0 500 560"></svg>
+          </div>
+          <div class="draw-caption">
+            <span>Esquema em escala proporcional</span>
+            <span class="mono" id="lblElevInfo">H = 21.50 m | D = 3.18 m</span>
+          </div>
+        </div>
+
+        <!-- Vista 2: Planta Baixa do Bloco e Locação de Estacas -->
+        <div class="draw-view" id="viewPlan">
+          <div class="svg-wrap">
+            <svg id="svgPlan" viewBox="0 0 500 500"></svg>
+          </div>
+          <div class="draw-caption">
+            <span>Disposição das estacas e contorno do pilar</span>
+            <span class="mono" id="lblPlanInfo">Bloco 4.20 × 4.20 m</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Barra de Ações -->
+  <div class="actions-bar">
+    <button type="button" class="btn btn-gold" onclick="window.print()">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+      Gerar Memorial Completo (PDF / Imprimir)
+    </button>
+    <button type="button" class="btn btn-ghost" onclick="restoreDefaults()">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      Restaurar Padrão DPT 160 m³
+    </button>
+    <button type="button" class="btn btn-ghost" onclick="copySummaryText()">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+      Copiar Resumo Técnico
+    </button>
+  </div>
+
+  <!-- Memória de Cálculo Passo a Passo -->
+  <div class="section-title">
+    <span class="pin"></span>
+    <span>Memória de Cálculo Analítica</span>
+    <small>Fórmula literal → Substituição numérica → Resultado final</small>
+  </div>
+
+  <!-- Bloco 1: Geometria e Cargas Gravitacionais -->
+  <div class="mem-block">
+    <h4>1. Geometria da Torre e Ações Gravitacionais <span class="ref-chip">NBR 6120</span></h4>
+    <div class="mem-row">
+      <span class="lbl">Área da Seção Transversal:</span>
+      <span>A_b = (π × D²) / 4 = (π × <span id="m_d1">3.18</span>²) / 4 = <b class="hl" id="m_ab">7.94</b> <span class="unit">m²</span></span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Volume Líquido de Água:</span>
+      <span>V_água = <span id="m_v1">160.00</span> m³ → Peso da Água: P_água = V × 10.0 kN/m³ = <b class="hl" id="m_p_agua">1600.00</b> <span class="unit">kN</span> (<span id="m_p_agua_tf">160.00</span> tf)</span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Área Lateral do Costado:</span>
+      <span>A_lat = π × D × H = π × <span id="m_d2">3.18</span> × <span id="m_h1">21.50</span> = <b class="hl" id="m_alat">214.78</b> <span class="unit">m²</span></span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Peso do Costado Metálico:</span>
+      <span>P_cost = A_lat × e × 78.5 kN/m³ = <span id="m_alat2">214.78</span> × <span id="m_echapa_m">0.00635</span> × 78.5 = <b class="hl" id="m_pcost">107.06</b> <span class="unit">kN</span></span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Peso Acessórios / Tampo / Fundo:</span>
+      <span>P_acess = <span id="m_per_acess">20</span>% × P_cost = <b class="hl" id="m_pacess">21.41</b> <span class="unit">kN</span></span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Peso Metálico Total:</span>
+      <span>N_met = P_cost + P_acess = <b class="hl" id="m_nmet">128.47</b> <span class="unit">kN</span> (<span id="m_nmet_tf">12.85</span> tf)</span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Peso Próprio do Bloco:</span>
+      <span>P_bloco = B × B × h × 25 kN/m³ = <span id="m_b1">4.20</span>² × <span id="m_hb1">1.10</span> × 25 = <b class="hl" id="m_pbloco">485.10</b> <span class="unit">kN</span> (<span id="m_pbloco_tf">48.51</span> tf)</span>
+    </div>
+  </div>
+
+  <!-- Bloco 2: Ação do Vento e Tombamento -->
+  <div class="mem-block">
+    <h4>2. Ação Dinâmica do Vento e Momento de Tombamento <span class="ref-chip">NBR 6123</span></h4>
+    <div class="mem-row">
+      <span class="lbl">Velocidade Característica:</span>
+      <span>V_k = V₀ × S₁ × S₂ × S₃ = <span id="m_v0">30</span> × <span id="m_s1">1.00</span> × <span id="m_s2">1.02</span> × <span id="m_s3">1.00</span> = <b class="hl" id="m_vk">30.60</b> <span class="unit">m/s</span></span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Pressão Dinâmica:</span>
+      <span>q = 0.613 × V_k² = 0.613 × <span id="m_vk2">30.60</span>² = <b class="hl" id="m_q">574.0</b> <span class="unit">N/m²</span> (<span id="m_q_kpa">0.574</span> kN/m²)</span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Área Frontal Projetada:</span>
+      <span>A_proj = D × H = <span id="m_d3">3.18</span> × <span id="m_h2">21.50</span> = <b class="hl" id="m_aproj">68.37</b> <span class="unit">m²</span></span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Força Horizontal de Vento:</span>
+      <span>F_v = q × C_a × A_proj = <span id="m_q_kpa2">0.574</span> × <span id="m_ca">0.85</span> × <span id="m_aproj2">68.37</span> = <b class="hl" id="m_fv">33.36</b> <span class="unit">kN</span> (<span id="m_fv_tf">3.34</span> tf)</span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Momento de Tombamento por Vento:</span>
+      <span>M_v = F_v × (H / 2) = <span id="m_fv2">33.36</span> × (<span id="m_h3">21.50</span> / 2) = <b class="hl" id="m_mv">358.62</b> <span class="unit">kN·m</span> (<span id="m_mv_tf">35.86</span> tf·m)</span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Momento de Excentricidade:</span>
+      <span>M_e = e_acc × (N_água + N_met) = <span id="m_eacc">0.159</span> m × <span id="m_ntot_sem_bloco">1728.47</span> kN = <b class="hl" id="m_me">274.83</b> <span class="unit">kN·m</span> (<span id="m_me_tf">27.48</span> tf·m)</span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Momento Total de Serviço:</span>
+      <span>M_k = M_v + M_e = <span id="m_mv2">358.62</span> + <span id="m_me2">274.83</span> = <b class="hl" id="m_mtot">633.45</b> <span class="unit">kN·m</span> (<span id="m_mtot_tf">63.35</span> tf·m)</span>
+    </div>
+  </div>
+
+  <!-- Bloco 3: Envoltórias e Distribuição de Cargas nas Estacas (Schiel) -->
+  <div class="mem-block">
+    <h4>3. Distribuição de Cargas nas Estacas (Método de Schiel) <span class="ref-chip">NBR 6118 / 6122</span></h4>
+    <div class="tbl-wrap">
+      <table class="mem-tbl">
+        <thead>
+          <tr>
+            <th>Hipótese de Carregamento</th>
+            <th class="num">Carga Vertical (Nk)</th>
+            <th class="num">Momento (Mk)</th>
+            <th class="num">Carga Máx. (P_max)</th>
+            <th class="num">Carga Mín. (P_min)</th>
+            <th>Situação da Fundação</th>
+          </tr>
+        </thead>
+        <tbody id="tblSchielBody">
+          <!-- Gerado via JS -->
+        </tbody>
+      </table>
+    </div>
+    <div class="mem-row" style="margin-top:12px;">
+      <span class="lbl">Fórmula de Schiel:</span>
+      <span>P_i = (N_k / n) ± (M_k × y_i) / ∑y_i²</span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Inércia do Grupo (∑y_i²):</span>
+      <span>∑y_i² = <b class="hl" id="m_sum_y2">6.76</b> <span class="unit">m²</span> (Braço crítico y_max = <span id="m_ymax">1.30</span> m)</span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Capacidade Admissível (Teixeira):</span>
+      <span>Padm,c = <b class="hl" id="m_padm_c">56.50</b> tf | Padm,t = <b class="hl" id="m_padm_t">31.60</b> tf</span>
+    </div>
+  </div>
+
+  <!-- Bloco 4: Dimensionamento do Bloco de Coroamento -->
+  <div class="mem-block">
+    <h4>4. Dimensionamento Estrutural do Bloco (Bielas e Tirantes) <span class="ref-chip">NBR 6118</span></h4>
+    <div class="mem-row">
+      <span class="lbl">Altura Útil do Bloco:</span>
+      <span>d = h - cobrimento = <span id="m_hbloco_cm">110</span> cm - <span id="m_cob_cm">5.0</span> cm = <b class="hl" id="m_d_util">105.0</b> <span class="unit">cm</span> (<span id="m_d_util_m">1.05</span> m)</span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Verificação de Rigidez:</span>
+      <span>h ≥ 0.75 × (B - D) / 2 = 0.75 × (<span id="m_b_bloco">4.20</span> - <span id="m_d_col">3.18</span>) / 2 = <span id="m_h_rig_min">0.38</span> m → h = <b class="hl" id="m_h_adotado">1.10</b> m ≥ h_mín (<span class="badge ok">BLOCO RÍGIDO</span>)</span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Ângulo da Biela de Compressão:</span>
+      <span>tan(θ) = d / Δx = <span id="m_d_util_m2">1.05</span> / <span id="m_dist_biela">0.51</span> → θ = <b class="hl" id="m_theta">64.1°</b> (Intervalo recomendado: 45° a 65° <span class="badge ok">OK</span>)</span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Força de Tração no Tirante:</span>
+      <span>T_d = 1.4 × (N_estaca,eq × Δx) / d = <b class="hl" id="m_td">584.2</b> <span class="unit">kN</span> (<span id="m_td_tf">58.42</span> tf)</span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Área de Aço Calculada:</span>
+      <span>A_s,calc = T_d / f_yd = <span id="m_td2">584.2</span> / 43.48 kN/cm² = <b class="hl" id="m_as_calc">13.44</b> <span class="unit">cm²</span></span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Armadura Mínima do Bloco:</span>
+      <span>A_s,mín = 0.15% × B × h = 0.0015 × <span id="m_b_cm">420</span> × <span id="m_h_cm">110</span> = <b class="hl" id="m_as_min">69.30</b> <span class="unit">cm²</span> (<span id="m_as_min_m">16.50</span> cm²/m total → <span id="m_as_min_face">8.25</span> cm²/m por face)</span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Armadura Adotada no Bloco:</span>
+      <span>Malha dupla ortogonal: <b class="hl" id="m_arm_adotada">Ø 12.5 c/ 14 cm</b> (A_s = 8.78 cm²/m por face e direção) + Estribos laterais</span>
+    </div>
+  </div>
+
+  <!-- Bloco 5: Dimensionamento Estrutural das Estacas -->
+  <div class="mem-block">
+    <h4>5. Dimensionamento Estrutural da Estaca Hélice Contínua <span class="ref-chip">NBR 6118 / NBR 6122</span></h4>
+    <div class="mem-row">
+      <span class="lbl">Área de Concreto da Estaca:</span>
+      <span>A_c = (π × Ø²) / 4 = (π × 40²) / 4 = <b class="hl">1256.64</b> <span class="unit">cm²</span></span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Armadura Mínima Longitudinal:</span>
+      <span>A_s,mín = 0.40% × A_c = 0.004 × 1256.64 = <b class="hl" id="m_as_estaca_min">5.03</b> <span class="unit">cm²</span></span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Armadura Longitudinal Adotada:</span>
+      <span>Adotado: <b class="hl" id="m_arm_estaca">6 Ø 12.5 mm</b> (A_s = 7.36 cm² > A_s,mín) com comprimento total cravado <span id="m_l_estaca_txt">15.0 m</span></span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Armadura Transversal (Espirais):</span>
+      <span>Espiral helicoidal de aço CA-60: <b class="hl">Ø 6.3 mm c/ 15 cm</b> (passo reduzido a 10 cm nos primeiros 2 metros do topo)</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast Notifier -->
+<div class="toast" id="toastBox">Resumo técnico copiado com sucesso!</div>
+
+<!-- Rodapé -->
+<footer>
+  <div class="wrap foot-in">
+    <div>
+      <b>MOURA BARRETTO ENGENHARIA LTDA</b> — Vitória da Conquista & Feira de Santana, Bahia<br>
+      Especializada em Fundações Especiais, Estruturas de Concreto Armado e Obras Públicas (CONDER).
+    </div>
+    <div>
+      Acesso interno · Ferramenta de automação estrutural para a obra <b>DPT Salvador</b>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Objeto com os modelos pré-definidos
+const PRESETS = {
+  DPT160: {
+    name: "DPT Salvador - 160 m³",
+    tipoFun: "estaca",
+    volume: 160,
+    diametro: 3.18,
+    h: 21.50,
+    espChapa: 6.35,
+    percAcess: 20,
+    v0: 30,
+    s1: 1.0,
+    s2: 1.02,
+    s3: 1.0,
+    ca: 0.85,
+    excPerc: 5.0,
+    numEstacas: "8",
+    diamEstaca: 40,
+    espacEstacas: 1.30,
+    comprEstaca: 15.0,
+    ladoBloco: 4.20,
+    hBloco: 1.10,
+    cobrimento: 5.0,
+    fck: 30,
+    fyk: 500,
+    padmC: 56.5,
+    padmT: 31.6,
+    sigmaAdm: 1.0
+  },
+  DPT100: {
+    name: "DPT Salvador - 100 m³",
+    tipoFun: "estaca",
+    volume: 100,
+    diametro: 3.18,
+    h: 13.80,
+    espChapa: 4.75,
+    percAcess: 20,
+    v0: 30,
+    s1: 1.0,
+    s2: 1.02,
+    s3: 1.0,
+    ca: 0.85,
+    excPerc: 5.0,
+    numEstacas: "6",
+    diamEstaca: 40,
+    espacEstacas: 1.30,
+    comprEstaca: 14.0,
+    ladoBloco: 3.80,
+    hBloco: 1.00,
+    cobrimento: 5.0,
+    fck: 30,
+    fyk: 500,
+    padmC: 56.5,
+    padmT: 31.6,
+    sigmaAdm: 1.0
+  },
+  VITCIE: {
+    name: "VIT-CIE - 143 m³ (Referência Validada)",
+    tipoFun: "estaca",
+    volume: 143,
+    diametro: 3.18,
+    h: 21.30,
+    espChapa: 6.35,
+    percAcess: 20,
+    v0: 30,
+    s1: 1.0,
+    s2: 1.00,
+    s3: 1.0,
+    ca: 1.00,
+    excPerc: 5.0,
+    numEstacas: "16",
+    diamEstaca: 40,
+    espacEstacas: 1.20,
+    comprEstaca: 6.0,
+    ladoBloco: 4.40,
+    hBloco: 1.05,
+    cobrimento: 5.0,
+    fck: 25,
+    fyk: 500,
+    padmC: 20.0,
+    padmT: 14.0,
+    sigmaAdm: 0.6
+  },
+  CITCEC: {
+    name: "CIT-CEC - 32 m³ (Sapata Superficial)",
+    tipoFun: "superficial",
+    volume: 32,
+    diametro: 2.20,
+    h: 11.20,
+    espChapa: 5.0,
+    percAcess: 15,
+    v0: 30,
+    s1: 1.0,
+    s2: 1.00,
+    s3: 1.0,
+    ca: 1.20,
+    excPerc: 0.0,
+    numEstacas: "4",
+    diamEstaca: 40,
+    espacEstacas: 1.20,
+    comprEstaca: 0.0,
+    ladoBloco: 4.50,
+    hBloco: 1.00,
+    cobrimento: 5.0,
+    fck: 25,
+    fyk: 500,
+    padmC: 50.0,
+    padmT: 20.0,
+    sigmaAdm: 1.0
+  }
+};
+
+let currentTab = 'elev';
+
+function loadPreset(key) {
+  const p = PRESETS[key];
+  if (!p) return;
+
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('btnPreset' + key);
+  if (btn) btn.classList.add('active');
+
+  document.getElementById('selTipoFun').value = p.tipoFun;
+  document.getElementById('inpVolume').value = p.volume;
+  document.getElementById('inpDiametro').value = p.diametro;
+  document.getElementById('inpH').value = p.h;
+  document.getElementById('inpEspChapa').value = p.espChapa;
+  document.getElementById('inpPercAcess').value = p.percAcess;
+  document.getElementById('inpV0').value = p.v0;
+  document.getElementById('inpS1').value = p.s1;
+  document.getElementById('inpS2').value = p.s2;
+  document.getElementById('inpS3').value = p.s3;
+  document.getElementById('inpCa').value = p.ca;
+  document.getElementById('inpExcPerc').value = p.excPerc;
+  document.getElementById('selNumEstacas').value = p.numEstacas;
+  document.getElementById('inpDiamEstaca').value = p.diamEstaca;
+  document.getElementById('inpEspacEstacas').value = p.espacEstacas;
+  document.getElementById('inpComprEstaca').value = p.comprEstaca;
+  document.getElementById('inpLadoBloco').value = p.ladoBloco;
+  document.getElementById('inpHBloco').value = p.hBloco;
+  document.getElementById('inpCobrimento').value = p.cobrimento;
+  document.getElementById('inpFck').value = p.fck;
+  document.getElementById('inpFyk').value = p.fyk;
+  document.getElementById('inpPadmC').value = p.padmC;
+  document.getElementById('inpPadmT').value = p.padmT;
+  document.getElementById('inpSigmaAdm').value = p.sigmaAdm;
+
+  onTipoFunChange();
+  recalc();
+  showToast("Preset carregado: " + p.name);
+}
+
+function restoreDefaults() {
+  loadPreset('DPT160');
+}
+
+function onTipoFunChange() {
+  const tipo = document.getElementById('selTipoFun').value;
+  const isEstaca = (tipo === 'estaca');
+  document.getElementById('grpEstacas').style.display = isEstaca ? 'block' : 'none';
+  document.getElementById('grpGeotEstaca').style.display = isEstaca ? 'block' : 'none';
+  document.getElementById('grpGeotRasa').style.display = isEstaca ? 'none' : 'block';
+  recalc();
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.draw-view').forEach(v => v.classList.remove('active'));
+
+  if (tab === 'elev') {
+    document.getElementById('tabBtnElev').classList.add('active');
+    document.getElementById('viewElev').classList.add('active');
+  } else {
+    document.getElementById('tabBtnPlan').classList.add('active');
+    document.getElementById('viewPlan').classList.add('active');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toastBox');
+  t.innerHTML = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// Retorna coordenadas das estacas (em metros, centradas em 0,0)
+function getPileCoordinates(n, s) {
+  const coords = [];
+  const half = s / 2;
+
+  if (n === 4) {
+    coords.push({x: -half, y: -half}, {x: half, y: -half}, {x: half, y: half}, {x: -half, y: half});
+  } else if (n === 5) {
+    coords.push({x: -half, y: -half}, {x: half, y: -half}, {x: half, y: half}, {x: -half, y: half}, {x: 0, y: 0});
+  } else if (n === 6) {
+    // 2 colunas de 3 estacas
+    coords.push(
+      {x: -half, y: -s}, {x: -half, y: 0}, {x: -half, y: s},
+      {x: half, y: -s}, {x: half, y: 0}, {x: half, y: s}
+    );
+  } else if (n === 8) {
+    // Octógono / anel perimetral
+    coords.push(
+      {x: -s, y: -s}, {x: 0, y: -s}, {x: s, y: -s},
+      {x: -s, y: 0},                  {x: s, y: 0},
+      {x: -s, y: s},  {x: 0, y: s},  {x: s, y: s}
+    );
+  } else if (n === 9) {
+    // Malha 3 × 3
+    for (let ix of [-s, 0, s]) {
+      for (let iy of [-s, 0, s]) {
+        coords.push({x: ix, y: iy});
+      }
+    }
+  } else if (n === 12) {
+    // Anel 4 × 4 sem as 4 do centro
+    const s1 = 1.5 * s;
+    const s2 = 0.5 * s;
+    for (let ix of [-s1, -s2, s2, s1]) {
+      for (let iy of [-s1, -s2, s2, s1]) {
+        if (Math.abs(ix) === s2 && Math.abs(iy) === s2) continue;
+        coords.push({x: ix, y: iy});
+      }
+    }
+  } else if (n === 16) {
+    // Malha 4 × 4 completa
+    const s1 = 1.5 * s;
+    const s2 = 0.5 * s;
+    for (let ix of [-s1, -s2, s2, s1]) {
+      for (let iy of [-s1, -s2, s2, s1]) {
+        coords.push({x: ix, y: iy});
+      }
+    }
+  }
+  return coords;
+}
+
+// Função Principal de Recálculo
+function recalc() {
+  const tipoFun = document.getElementById('selTipoFun').value;
+  const isEstaca = (tipoFun === 'estaca');
+
+  // Inputs
+  const V = parseFloat(document.getElementById('inpVolume').value) || 0;
+  const D = parseFloat(document.getElementById('inpDiametro').value) || 3.18;
+  const H = parseFloat(document.getElementById('inpH').value) || 20;
+  const e_chapa_mm = parseFloat(document.getElementById('inpEspChapa').value) || 6.35;
+  const percAcess = parseFloat(document.getElementById('inpPercAcess').value) || 20;
+
+  const V0 = parseFloat(document.getElementById('inpV0').value) || 30;
+  const S1 = parseFloat(document.getElementById('inpS1').value) || 1.0;
+  const S2 = parseFloat(document.getElementById('inpS2').value) || 1.02;
+  const S3 = parseFloat(document.getElementById('inpS3').value) || 1.0;
+  const Ca = parseFloat(document.getElementById('inpCa').value) || 0.85;
+  const excPerc = parseFloat(document.getElementById('inpExcPerc').value) || 5.0;
+
+  const nEstacas = parseInt(document.getElementById('selNumEstacas').value) || 8;
+  const diamEstacaCm = parseFloat(document.getElementById('inpDiamEstaca').value) || 40;
+  const diamEstacaM = diamEstacaCm / 100;
+  const sEstacas = parseFloat(document.getElementById('inpEspacEstacas').value) || 1.30;
+  const LEstaca = parseFloat(document.getElementById('inpComprEstaca').value) || 15.0;
+
+  const B = parseFloat(document.getElementById('inpLadoBloco').value) || 4.20;
+  const hBloco = parseFloat(document.getElementById('inpHBloco').value) || 1.10;
+  const cobrimentoCm = parseFloat(document.getElementById('inpCobrimento').value) || 5.0;
+
+  const fck = parseFloat(document.getElementById('inpFck').value) || 30;
+  const fyk = parseFloat(document.getElementById('inpFyk').value) || 500;
+  const Padm_c = parseFloat(document.getElementById('inpPadmC').value) || 56.5;
+  const Padm_t = parseFloat(document.getElementById('inpPadmT').value) || 31.6;
+  const sigmaAdm = parseFloat(document.getElementById('inpSigmaAdm').value) || 1.0;
+
+  // 1. Cálculos Gravitacionais
+  const Ab = (Math.PI * Math.pow(D, 2)) / 4;
+  const P_agua_kN = V * 10.0;
+  const P_agua_tf = P_agua_kN / 10.0;
+
+  const Alat = Math.PI * D * H;
+  const e_chapa_m = e_chapa_mm / 1000.0;
+  const P_cost_kN = Alat * e_chapa_m * 78.5;
+  const P_acess_kN = P_cost_kN * (percAcess / 100.0);
+  const N_met_kN = P_cost_kN + P_acess_kN;
+  const N_met_tf = N_met_kN / 10.0;
+
+  const Vol_bloco = Math.pow(B, 2) * hBloco;
+  const P_bloco_kN = Vol_bloco * 25.0;
+  const P_bloco_tf = P_bloco_kN / 10.0;
+
+  // 2. Vento NBR 6123
+  const Vk = V0 * S1 * S2 * S3;
+  const q_N_m2 = 0.613 * Math.pow(Vk, 2);
+  const q_kPa = q_N_m2 / 1000.0;
+  const Aproj = D * H;
+  const Fv_kN = q_kPa * Ca * Aproj;
+  const Fv_tf = Fv_kN / 10.0;
+
+  const Mv_kNm = Fv_kN * (H / 2.0);
+  const Mv_tfm = Mv_kNm / 10.0;
+
+  const e_acc_m = (excPerc / 100.0) * D;
+  const Me_kNm = e_acc_m * (P_agua_kN + N_met_kN);
+  const Me_tfm = Me_kNm / 10.0;
+
+  const M_tot_kNm = Mv_kNm + Me_kNm;
+  const M_tot_tfm = M_tot_kNm / 10.0;
+
+  // 3. Distribuição de Cargas nas Estacas (Schiel)
+  const coords = getPileCoordinates(nEstacas, sEstacas);
+  let sum_y2 = 0;
+  let max_y = 0;
+  coords.forEach(p => {
+    sum_y2 += Math.pow(p.y, 2);
+    if (Math.abs(p.y) > max_y) max_y = Math.abs(p.y);
+  });
+  if (sum_y2 === 0) sum_y2 = 1.0;
+
+  // Envoltórias
+  // Caso 1: Tanque Cheio + Vento + Excentricidade (Máxima Compressão)
+  const N1_kN = P_agua_kN + N_met_kN + P_bloco_kN;
+  const N1_tf = N1_kN / 10.0;
+  const M1_kNm = M_tot_kNm;
+  const M1_tfm = M_tot_tfm;
+
+  const P1_med_tf = N1_tf / nEstacas;
+  const DeltaP1_tf = (M1_tfm * max_y) / sum_y2;
+  const P1_max_tf = P1_med_tf + DeltaP1_tf;
+  const P1_min_tf = P1_med_tf - DeltaP1_tf;
+
+  // Caso 2: Tanque Cheio sem Vento
+  const N2_tf = N1_tf;
+  const P2_max_tf = N2_tf / nEstacas;
+  const P2_min_tf = P2_max_tf;
+
+  // Caso 3: Tanque Vazio + Vento (Maior Risco de Tração/Alívio)
+  const N3_kN = N_met_kN + P_bloco_kN;
+  const N3_tf = N3_kN / 10.0;
+  const M3_tfm = Mv_tfm; // Vento puro atuando no tanque vazio
+  const P3_med_tf = N3_tf / nEstacas;
+  const DeltaP3_tf = (M3_tfm * max_y) / sum_y2;
+  const P3_max_tf = P3_med_tf + DeltaP3_tf;
+  const P3_min_tf = P3_med_tf - DeltaP3_tf;
+
+  // 4. Dimensionamento do Bloco (Bielas e Tirantes)
+  const d_util_m = hBloco - (cobrimentoCm / 100.0);
+  const dist_biela_m = Math.max(0.20, max_y - (D / 4.0));
+  const tanTheta = d_util_m / dist_biela_m;
+  const thetaDeg = Math.atan(tanTheta) * (180.0 / Math.PI);
+  const h_rig_min = 0.75 * (B - D) / 2.0;
+
+  // Força de tração de cálculo no tirante
+  const Nestaca_eq_kN = P1_max_tf * 10.0;
+  const Td_kN = 1.4 * (Nestaca_eq_kN * dist_biela_m) / d_util_m;
+  const fyd_kN_cm2 = (fyk / 1.15) / 10.0; // ~43.48 kN/cm²
+  const As_calc_cm2 = Td_kN / fyd_kN_cm2;
+
+  // Armadura mínima (NBR 6118 taxa 0.15% para C30)
+  const As_min_tot_cm2 = 0.0015 * (B * 100.0) * (hBloco * 100.0);
+  const As_min_face_m = (As_min_tot_cm2 / B) / 2.0;
+
+  // Armadura da Estaca
+  const Ac_estaca_cm2 = (Math.PI * Math.pow(diamEstacaCm, 2)) / 4.0;
+  const As_estaca_min_cm2 = 0.004 * Ac_estaca_cm2; // 0.4% Ac
+
+  // Atualizar Valores na Memória de Cálculo
+  document.getElementById('m_d1').innerText = D.toFixed(2);
+  document.getElementById('m_d2').innerText = D.toFixed(2);
+  document.getElementById('m_d3').innerText = D.toFixed(2);
+  document.getElementById('m_ab').innerText = Ab.toFixed(2);
+  document.getElementById('m_v1').innerText = V.toFixed(2);
+  document.getElementById('m_p_agua').innerText = P_agua_kN.toFixed(2);
+  document.getElementById('m_p_agua_tf').innerText = P_agua_tf.toFixed(2);
+  document.getElementById('m_h1').innerText = H.toFixed(2);
+  document.getElementById('m_h2').innerText = H.toFixed(2);
+  document.getElementById('m_h3').innerText = H.toFixed(2);
+  document.getElementById('m_alat').innerText = Alat.toFixed(2);
+  document.getElementById('m_alat2').innerText = Alat.toFixed(2);
+  document.getElementById('m_echapa_m').innerText = e_chapa_m.toFixed(5);
+  document.getElementById('m_pcost').innerText = P_cost_kN.toFixed(2);
+  document.getElementById('m_per_acess').innerText = percAcess.toFixed(0);
+  document.getElementById('m_pacess').innerText = P_acess_kN.toFixed(2);
+  document.getElementById('m_nmet').innerText = N_met_kN.toFixed(2);
+  document.getElementById('m_nmet_tf').innerText = N_met_tf.toFixed(2);
+  document.getElementById('m_b1').innerText = B.toFixed(2);
+  document.getElementById('m_hb1').innerText = hBloco.toFixed(2);
+  document.getElementById('m_pbloco').innerText = P_bloco_kN.toFixed(2);
+  document.getElementById('m_pbloco_tf').innerText = P_bloco_tf.toFixed(2);
+
+  document.getElementById('m_v0').innerText = V0.toFixed(0);
+  document.getElementById('m_s1').innerText = S1.toFixed(2);
+  document.getElementById('m_s2').innerText = S2.toFixed(2);
+  document.getElementById('m_s3').innerText = S3.toFixed(2);
+  document.getElementById('m_vk').innerText = Vk.toFixed(2);
+  document.getElementById('m_vk2').innerText = Vk.toFixed(2);
+  document.getElementById('m_q').innerText = q_N_m2.toFixed(1);
+  document.getElementById('m_q_kpa').innerText = q_kPa.toFixed(3);
+  document.getElementById('m_q_kpa2').innerText = q_kPa.toFixed(3);
+  document.getElementById('m_aproj').innerText = Aproj.toFixed(2);
+  document.getElementById('m_aproj2').innerText = Aproj.toFixed(2);
+  document.getElementById('m_ca').innerText = Ca.toFixed(2);
+  document.getElementById('m_fv').innerText = Fv_kN.toFixed(2);
+  document.getElementById('m_fv_tf').innerText = Fv_tf.toFixed(2);
+  document.getElementById('m_fv2').innerText = Fv_kN.toFixed(2);
+  document.getElementById('m_mv').innerText = Mv_kNm.toFixed(2);
+  document.getElementById('m_mv_tf').innerText = Mv_tfm.toFixed(2);
+  document.getElementById('m_mv2').innerText = Mv_kNm.toFixed(2);
+  document.getElementById('m_eacc').innerText = e_acc_m.toFixed(3);
+  document.getElementById('m_ntot_sem_bloco').innerText = (P_agua_kN + N_met_kN).toFixed(2);
+  document.getElementById('m_me').innerText = Me_kNm.toFixed(2);
+  document.getElementById('m_me_tf').innerText = Me_tfm.toFixed(2);
+  document.getElementById('m_me2').innerText = Me_kNm.toFixed(2);
+  document.getElementById('m_mtot').innerText = M_tot_kNm.toFixed(2);
+  document.getElementById('m_mtot_tf').innerText = M_tot_tfm.toFixed(2);
+
+  document.getElementById('m_sum_y2').innerText = sum_y2.toFixed(2);
+  document.getElementById('m_ymax').innerText = max_y.toFixed(2);
+  document.getElementById('m_padm_c').innerText = Padm_c.toFixed(2);
+  document.getElementById('m_padm_t').innerText = Padm_t.toFixed(2);
+
+  document.getElementById('m_hbloco_cm').innerText = (hBloco * 100).toFixed(0);
+  document.getElementById('m_cob_cm').innerText = cobrimentoCm.toFixed(1);
+  document.getElementById('m_d_util').innerText = (d_util_m * 100).toFixed(1);
+  document.getElementById('m_d_util_m').innerText = d_util_m.toFixed(2);
+  document.getElementById('m_d_util_m2').innerText = d_util_m.toFixed(2);
+  document.getElementById('m_b_bloco').innerText = B.toFixed(2);
+  document.getElementById('m_d_col').innerText = D.toFixed(2);
+  document.getElementById('m_h_rig_min').innerText = h_rig_min.toFixed(2);
+  document.getElementById('m_h_adotado').innerText = hBloco.toFixed(2);
+  document.getElementById('m_dist_biela').innerText = dist_biela_m.toFixed(2);
+  document.getElementById('m_theta').innerText = thetaDeg.toFixed(1) + "°";
+  document.getElementById('m_td').innerText = Td_kN.toFixed(1);
+  document.getElementById('m_td_tf').innerText = (Td_kN / 10).toFixed(2);
+  document.getElementById('m_td2').innerText = Td_kN.toFixed(1);
+  document.getElementById('m_as_calc').innerText = As_calc_cm2.toFixed(2);
+  document.getElementById('m_b_cm').innerText = (B * 100).toFixed(0);
+  document.getElementById('m_h_cm').innerText = (hBloco * 100).toFixed(0);
+  document.getElementById('m_as_min').innerText = As_min_tot_cm2.toFixed(2);
+  document.getElementById('m_as_min_m').innerText = (As_min_tot_cm2 / B).toFixed(2);
+  document.getElementById('m_as_min_face').innerText = As_min_face_m.toFixed(2);
+  document.getElementById('m_as_estaca_min').innerText = As_estaca_min_cm2.toFixed(2);
+  document.getElementById('m_l_estaca_txt').innerText = LEstaca.toFixed(1) + " m";
+
+  // Tabela Schiel
+  let htmlTable = `
+    <tr>
+      <td><b>1. Tanque Cheio + Vento + Excentricidade</b><br><small>Máxima solicitação à compressão</small></td>
+      <td class="num">${N1_tf.toFixed(2)} tf</td>
+      <td class="num">${M1_tfm.toFixed(2)} tf·m</td>
+      <td class="num"><b>${P1_max_tf.toFixed(2)} tf</b></td>
+      <td class="num">${P1_min_tf.toFixed(2)} tf</td>
+      <td><span class="badge ${P1_max_tf <= Padm_c ? 'ok' : 'alerta'}">${P1_max_tf <= Padm_c ? '● Atende Padm' : '⚠️ Excede Padm'}</span></td>
+    </tr>
+    <tr>
+      <td><b>2. Tanque Cheio sem Vento</b><br><small>Carga puramente axial simétrica</small></td>
+      <td class="num">${N2_tf.toFixed(2)} tf</td>
+      <td class="num">0.00 tf·m</td>
+      <td class="num">${P2_max_tf.toFixed(2)} tf</td>
+      <td class="num">${P2_min_tf.toFixed(2)} tf</td>
+      <td><span class="badge ok">● Uniforme</span></td>
+    </tr>
+    <tr>
+      <td><b>3. Tanque Vazio + Vento Máximo</b><br><small>Verificação crítica de alívio e tração</small></td>
+      <td class="num">${N3_tf.toFixed(2)} tf</td>
+      <td class="num">${M3_tfm.toFixed(2)} tf·m</td>
+      <td class="num">${P3_max_tf.toFixed(2)} tf</td>
+      <td class="num"><b>${P3_min_tf.toFixed(2)} tf</b></td>
+      <td><span class="badge ${P3_min_tf >= 0 ? 'ok' : (Math.abs(P3_min_tf) <= Padm_t ? 'alerta' : 'bad')}">${P3_min_tf >= 0 ? '● Comprimida (Sem Tração)' : (Math.abs(P3_min_tf) <= Padm_t ? '⚠️ Tração < Padm,t (OK)' : '⛔ Tração Excessiva')}</span></td>
+    </tr>
+  `;
+  document.getElementById('tblSchielBody').innerHTML = htmlTable;
+
+  // Atualizar Cards de Checagem
+  // 1. Compressão Máxima
+  const cardChkComp = document.getElementById('cardChkComp');
+  const txtChkComp = document.getElementById('txtChkComp');
+  const msgChkComp = document.getElementById('msgChkComp');
+  if (P1_max_tf <= Padm_c) {
+    cardChkComp.className = 'chkcard ok';
+    txtChkComp.innerHTML = `● ${P1_max_tf.toFixed(1)} tf <small style="font-size:12px;color:var(--tinta-2);font-weight:500;">/ ${Padm_c.toFixed(1)} tf</small>`;
+    const folga = ((1 - (P1_max_tf / Padm_c)) * 100).toFixed(0);
+    msgChkComp.innerHTML = `<b>OK</b> · Margem de segurança de ${folga}% em relação à carga admissível.`;
+  } else {
+    cardChkComp.className = 'chkcard bad';
+    txtChkComp.innerHTML = `⚠️ ${P1_max_tf.toFixed(1)} tf > ${Padm_c.toFixed(1)} tf`;
+    msgChkComp.innerHTML = `<b>Ajustar</b> · Adicione mais estacas ou aumente o comprimento de fuste.`;
+  }
+
+  // 2. Tração / Alívio
+  const cardChkTrac = document.getElementById('cardChkTrac');
+  const txtChkTrac = document.getElementById('txtChkTrac');
+  const msgChkTrac = document.getElementById('msgChkTrac');
+  if (P3_min_tf >= 0) {
+    cardChkTrac.className = 'chkcard ok';
+    txtChkTrac.innerHTML = `● Sem Tração (+${P3_min_tf.toFixed(1)} tf)`;
+    msgChkTrac.innerHTML = `<b>Excelente</b> · Todas as estacas permanecem comprimidas mesmo com tanque vazio.`;
+  } else if (Math.abs(P3_min_tf) <= Padm_t) {
+    cardChkTrac.className = 'chkcard warn';
+    txtChkTrac.innerHTML = `⚠️ Tração ${Math.abs(P3_min_tf).toFixed(1)} tf < ${Padm_t.toFixed(1)} tf`;
+    msgChkTrac.innerHTML = `<b>Atenção</b> · Armar a estaca contra tração (atende com folga à tração admissível).`;
+  } else {
+    cardChkTrac.className = 'chkcard bad';
+    txtChkTrac.innerHTML = `⛔ Tração Excessiva (${Math.abs(P3_min_tf).toFixed(1)} tf)`;
+    msgChkTrac.innerHTML = `<b>Crítico</b> · Excede a capacidade de tração da estaca. Amplie a base do bloco.`;
+  }
+
+  // 3. Rigidez do Bloco
+  const cardChkRig = document.getElementById('cardChkRig');
+  const txtChkRig = document.getElementById('txtChkRig');
+  const msgChkRig = document.getElementById('msgChkRig');
+  if (hBloco >= h_rig_min && thetaDeg >= 45 && thetaDeg <= 65) {
+    cardChkRig.className = 'chkcard ok';
+    txtChkRig.innerHTML = `● Bloco Rígido (θ = ${thetaDeg.toFixed(1)}°)`;
+    msgChkRig.innerHTML = `<b>OK</b> · Altura ${hBloco.toFixed(2)} m garante comportamento rígido e ângulo ótimo de bielas.`;
+  } else if (thetaDeg > 65) {
+    cardChkRig.className = 'chkcard ok';
+    txtChkRig.innerHTML = `● Bloco Muito Rígido (θ = ${thetaDeg.toFixed(1)}°)`;
+    msgChkRig.innerHTML = `<b>OK</b> · Bielas bastante íngremes. Altura plenamente suficiente.`;
+  } else {
+    cardChkRig.className = 'chkcard warn';
+    txtChkRig.innerHTML = `⚠️ Bloco Flexível (θ = ${thetaDeg.toFixed(1)}°)`;
+    msgChkRig.innerHTML = `<b>Ajustar</b> · Aumente a altura h para garantir comportamento rígido (h ≥ ${h_rig_min.toFixed(2)} m).`;
+  }
+
+  // 4. Espaçamento entre Estacas
+  const cardChkEsp = document.getElementById('cardChkEsp');
+  const txtChkEsp = document.getElementById('txtChkEsp');
+  const msgChkEsp = document.getElementById('msgChkEsp');
+  const sMin = 3.0 * diamEstacaM;
+  if (sEstacas >= sMin) {
+    cardChkEsp.className = 'chkcard ok';
+    txtChkEsp.innerHTML = `● s = ${sEstacas.toFixed(2)} m ≥ 3Ø (${sMin.toFixed(2)} m)`;
+    msgChkEsp.innerHTML = `<b>OK</b> · Espaçamento entre eixos atende às recomendações da NBR 6122 sem interferência.`;
+  } else {
+    cardChkEsp.className = 'chkcard warn';
+    txtChkEsp.innerHTML = `⚠️ s = ${sEstacas.toFixed(2)} m < 3Ø (${sMin.toFixed(2)} m)`;
+    msgChkEsp.innerHTML = `<b>Ajustar</b> · Aumente o espaçamento para evitar redução drástica por efeito de grupo.`;
+  }
+
+  // Atualizar Desenhos SVG
+  drawElevSvg(D, H, B, hBloco, LEstaca, Fv_kN, M_tot_kNm, isEstaca, nEstacas);
+  drawPlanSvg(B, D, coords, diamEstacaM, sEstacas, isEstaca);
+
+  // Labels das abas
+  document.getElementById('lblElevInfo').innerText = `H = ${H.toFixed(2)} m | D = ${D.toFixed(2)} m | h_bloco = ${hBloco.toFixed(2)} m`;
+  document.getElementById('lblPlanInfo').innerText = `Bloco ${B.toFixed(2)} × ${B.toFixed(2)} m | ${nEstacas} Estacas Ø${diamEstacaCm} cm`;
+}
+
+// Renderização do SVG da Elevação da Torre
+function drawElevSvg(D, H, B, hBloco, LEstaca, Fv, Mtot, isEstaca, nEstacas) {
+  const svg = document.getElementById('svgElev');
+  const W = 500;
+  const TotalH = 560;
+
+  // Escala para caber no SVG
+  const groundY = 380;
+  const towerTopY = 50;
+  const towerH_px = groundY - towerTopY - 30; // ~300px para a torre
+  const scaleY = towerH_px / Math.max(H, 10);
+  const scaleX = 140 / Math.max(D, 2.5);
+
+  const towerW_px = D * scaleX;
+  const towerH_real_px = H * scaleY;
+  const towerX = (W / 2) - (towerW_px / 2);
+  const towerY = groundY - towerH_real_px;
+
+  const blocoW_px = B * scaleX;
+  const blocoH_px = Math.max(22, hBloco * scaleY * 1.5);
+  const blocoX = (W / 2) - (blocoW_px / 2);
+  const blocoY = groundY;
+
+  let out = `
+    <!-- Fundo de Céu e Solo -->
+    <rect x="0" y="0" width="${W}" height="${groundY}" fill="#f6f9fc" />
+    <rect x="0" y="${groundY}" width="${W}" height="${TotalH - groundY}" fill="#e8e4da" />
+    <line x1="0" y1="${groundY}" x2="${W}" y2="${groundY}" stroke="#5a564c" stroke-width="2" />
+    <text x="15" y="${groundY + 18}" font-family="Bricolage Grotesque" font-size="12" font-weight="600" fill="#757063">NÍVEL DO TERRENO (TN = ±0.00)</text>
+
+    <!-- Hachuras de Solo -->
+    <g stroke="#cfc9bc" stroke-width="1.2">
+      <line x1="10" y1="${groundY + 30}" x2="30" y2="${groundY + 50}" />
+      <line x1="60" y1="${groundY + 30}" x2="80" y2="${groundY + 50}" />
+      <line x1="420" y1="${groundY + 30}" x2="440" y2="${groundY + 50}" />
+      <line x1="460" y1="${groundY + 30}" x2="480" y2="${groundY + 50}" />
+    </g>
+  `;
+
+  // Estacas ou Apoio
+  if (isEstaca) {
+    const pileW_px = 14;
+    const pileH_px = Math.min(130, LEstaca * 8);
+    const numDrawPiles = Math.min(nEstacas, 4);
+    const spacingDraw = (blocoW_px - 40) / Math.max(1, numDrawPiles - 1);
+
+    for (let i = 0; i < numDrawPiles; i++) {
+      const px = blocoX + 20 + (i * spacingDraw) - (pileW_px / 2);
+      out += `
+        <!-- Estaca ${i+1} -->
+        <rect x="${px}" y="${blocoY + blocoH_px}" width="${pileW_px}" height="${pileH_px}" fill="#7a8b99" stroke="#33424d" stroke-width="1.5" rx="2" />
+        <!-- Ponta de penetração -->
+        <polygon points="${px},${blocoY + blocoH_px + pileH_px} ${px + pileW_px},${blocoY + blocoH_px + pileH_px} ${px + pileW_px/2},${blocoY + blocoH_px + pileH_px + 12}" fill="#546573" />
+      `;
+    }
+    // Cota da profundidade
+    out += `
+      <line x1="30" y1="${blocoY + blocoH_px}" x2="30" y2="${blocoY + blocoH_px + pileH_px}" stroke="#2a4d69" stroke-width="1.5" stroke-dasharray="3,3" />
+      <text x="36" y="${blocoY + blocoH_px + (pileH_px/2)}" font-family="IBM Plex Mono" font-size="11" font-weight="600" fill="#2a4d69">L = ${LEstaca.toFixed(1)} m</text>
+    `;
+  }
+
+  // Bloco de Coroamento
+  out += `
+    <!-- Bloco de Concreto -->
+    <rect x="${blocoX}" y="${blocoY}" width="${blocoW_px}" height="${blocoH_px}" fill="#cbd4dc" stroke="#2c3e50" stroke-width="2" rx="3" />
+    <text x="${W/2}" y="${blocoY + (blocoH_px/2) + 4}" font-family="Bricolage Grotesque" font-size="12" font-weight="700" fill="#2c3e50" text-anchor="middle">BLOCO DE FUNDAÇÃO (${B.toFixed(2)} × ${B.toFixed(2)} × ${hBloco.toFixed(2)} m)</text>
+  `;
+
+  // Torre Metálica (Reservatório)
+  out += `
+    <!-- Cilindro Metálico -->
+    <defs>
+      <linearGradient id="gradTorre" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#b0bec5" />
+        <stop offset="40%" stop-color="#cfd8dc" />
+        <stop offset="70%" stop-color="#eceff1" />
+        <stop offset="100%" stop-color="#90a4ae" />
+      </linearGradient>
+      <linearGradient id="gradAgua" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="rgba(33, 150, 243, 0.4)" />
+        <stop offset="100%" stop-color="rgba(21, 101, 192, 0.7)" />
+      </linearGradient>
+    </defs>
+    
+    <!-- Corpo da Torre -->
+    <rect x="${towerX}" y="${towerY}" width="${towerW_px}" height="${towerH_real_px}" fill="url(#gradTorre)" stroke="#37474f" stroke-width="2" />
+    
+    <!-- Nível d'água interno representativo -->
+    <rect x="${towerX + 2}" y="${towerY + 25}" width="${towerW_px - 4}" height="${towerH_real_px - 25}" fill="url(#gradAgua)" />
+    
+    <!-- Teto cônico -->
+    <polygon points="${towerX - 4},${towerY} ${towerX + towerW_px + 4},${towerY} ${W/2},${towerY - 18}" fill="#78909c" stroke="#37474f" stroke-width="2" />
+    
+    <!-- Anéis de travamento / virolas do costado -->
+    <line x1="${towerX}" y1="${towerY + (towerH_real_px * 0.25)}" x2="${towerX + towerW_px}" y2="${towerY + (towerH_real_px * 0.25)}" stroke="#78909c" stroke-width="1.5" stroke-dasharray="4,2" />
+    <line x1="${towerX}" y1="${towerY + (towerH_real_px * 0.50)}" x2="${towerX + towerW_px}" y2="${towerY + (towerH_real_px * 0.50)}" stroke="#78909c" stroke-width="1.5" stroke-dasharray="4,2" />
+    <line x1="${towerX}" y1="${towerY + (towerH_real_px * 0.75)}" x2="${towerX + towerW_px}" y2="${towerY + (towerH_real_px * 0.75)}" stroke="#78909c" stroke-width="1.5" stroke-dasharray="4,2" />
+
+    <!-- Texto de Capacidade -->
+    <rect x="${W/2 - 50}" y="${towerY + (towerH_real_px/2) - 16}" width="100" height="32" fill="rgba(255,255,255,0.9)" rx="6" stroke="#b0bec5" />
+    <text x="${W/2}" y="${towerY + (towerH_real_px/2) + 5}" font-family="Bricolage Grotesque" font-size="14" font-weight="800" fill="#1565c0" text-anchor="middle">V = ${document.getElementById('inpVolume').value} m³</text>
+    <text x="${W/2}" y="${towerY + (towerH_real_px/2) + 24}" font-family="IBM Plex Mono" font-size="11" font-weight="600" fill="#37474f" text-anchor="middle">Ø ${D.toFixed(2)} m</text>
+
+    <!-- Flecha da Ação do Vento (Fv) atuando a meia altura -->
+    <g transform="translate(0, 0)">
+      <line x1="${towerX - 90}" y1="${towerY + (towerH_real_px/2)}" x2="${towerX - 10}" y2="${towerY + (towerH_real_px/2)}" stroke="#d97706" stroke-width="3.5" marker-end="url(#arrowVento)" />
+      <polygon points="${towerX - 10},${towerY + (towerH_real_px/2)} ${towerX - 22},${towerY + (towerH_real_px/2) - 6} ${towerX - 22},${towerY + (towerH_real_px/2) + 6}" fill="#d97706" />
+      <rect x="${towerX - 145}" y="${towerY + (towerH_real_px/2) - 20}" width="75" height="40" fill="#fef3c7" stroke="#f59e0b" rx="6" />
+      <text x="${towerX - 108}" y="${towerY + (towerH_real_px/2) - 4}" font-family="Bricolage Grotesque" font-size="11" font-weight="700" fill="#92400e" text-anchor="middle">VENTO Fv</text>
+      <text x="${towerX - 108}" y="${towerY + (towerH_real_px/2) + 12}" font-family="IBM Plex Mono" font-size="11" font-weight="700" fill="#b45309" text-anchor="middle">${(Fv/10).toFixed(2)} tf</text>
+    </g>
+
+    <!-- Momento de Tombamento na Base -->
+    <path d="M ${towerX + towerW_px + 20} ${groundY - 30} A 25 25 0 0 1 ${towerX + towerW_px + 50} ${groundY - 10}" fill="none" stroke="#b91c1c" stroke-width="2.5" />
+    <polygon points="${towerX + towerW_px + 50},${groundY - 10} ${towerX + towerW_px + 45},${groundY - 22} ${towerX + towerW_px + 56},${groundY - 18}" fill="#b91c1c" />
+    <text x="${towerX + towerW_px + 30}" y="${groundY - 36}" font-family="IBM Plex Mono" font-size="11" font-weight="700" fill="#b91c1c">Mk = ${(Mtot/10).toFixed(1)} tf·m</text>
+
+    <!-- Cota de Altura Total H -->
+    <line x1="${towerX + towerW_px + 10}" y1="${towerY}" x2="${towerX + towerW_px + 10}" y2="${groundY}" stroke="#64748b" stroke-width="1.5" />
+    <line x1="${towerX + towerW_px + 6}" y1="${towerY}" x2="${towerX + towerW_px + 14}" y2="${towerY}" stroke="#64748b" stroke-width="1.5" />
+    <line x1="${towerX + towerW_px + 6}" y1="${groundY}" x2="${towerX + towerW_px + 14}" y2="${groundY}" stroke="#64748b" stroke-width="1.5" />
+    <text x="${towerX + towerW_px + 18}" y="${towerY + (towerH_real_px/2) - 40}" font-family="IBM Plex Mono" font-size="12" font-weight="600" fill="#334155">H = ${H.toFixed(2)} m</text>
+  `;
+
+  svg.innerHTML = out;
+}
+
+// Renderização do SVG da Planta Baixa do Bloco e Estacas
+function drawPlanSvg(B, D, coords, diamEstacaM, sEstacas, isEstaca) {
+  const svg = document.getElementById('svgPlan');
+  const W = 500;
+  const H = 500;
+  const cx = W / 2;
+  const cy = H / 2;
+
+  // Escala para caber no SVG (com margens de 60px)
+  const maxDim = Math.max(B, 3.5);
+  const scale = (W - 140) / maxDim;
+
+  const blocoL_px = B * scale;
+  const blocoX = cx - (blocoL_px / 2);
+  const blocoY = cy - (blocoL_px / 2);
+
+  const colR_px = (D / 2) * scale;
+  const pileR_px = Math.max(8, (diamEstacaM / 2) * scale);
+
+  let out = `
+    <!-- Grade de Fundo Suave -->
+    <defs>
+      <pattern id="gridPlan" width="20" height="20" patternUnits="userSpaceOnUse">
+        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f0eee6" stroke-width="1"/>
+      </pattern>
+    </defs>
+    <rect width="${W}" height="${H}" fill="url(#gridPlan)" />
+
+    <!-- Eixos Principais de Simetria -->
+    <line x1="30" y1="${cy}" x2="${W - 30}" y2="${cy}" stroke="#b0bec5" stroke-width="1" stroke-dasharray="6,4" />
+    <line x1="${cx}" y1="30" x2="${cx}" y2="${H - 30}" stroke="#b0bec5" stroke-width="1" stroke-dasharray="6,4" />
+    <text x="${W - 25}" y="${cy - 6}" font-family="IBM Plex Mono" font-size="10" fill="#90a4ae">X</text>
+    <text x="${cx + 6}" y="38" font-family="IBM Plex Mono" font-size="10" fill="#90a4ae">Y</text>
+
+    <!-- Contorno do Bloco de Coroamento -->
+    <rect x="${blocoX}" y="${blocoY}" width="${blocoL_px}" height="${blocoL_px}" fill="#eaeff3" stroke="#2c3e50" stroke-width="2.5" rx="6" />
+
+    <!-- Círculo do Pilar Metálico (Costado do Reservatório) -->
+    <circle cx="${cx}" cy="${cy}" r="${colR_px}" fill="none" stroke="#0284c7" stroke-width="2.5" stroke-dasharray="5,3" />
+    <!-- Chapa do Costado Preenchimento translúcido -->
+    <circle cx="${cx}" cy="${cy}" r="${colR_px}" fill="rgba(2, 132, 199, 0.08)" />
+    <text x="${cx}" y="${cy - colR_px + 18}" font-family="Bricolage Grotesque" font-size="11" font-weight="700" fill="#0369a1" text-anchor="middle">CONTORNO DO COSTADO Ø ${D.toFixed(2)} m</text>
+  `;
+
+  // Estacas
+  if (isEstaca) {
+    coords.forEach((p, idx) => {
+      const px = cx + (p.x * scale);
+      const py = cy + (p.y * scale);
+      out += `
+        <!-- Estaca ${idx+1} -->
+        <circle cx="${px}" cy="${py}" r="${pileR_px}" fill="#64748b" stroke="#0f172a" stroke-width="2" />
+        <!-- Cruz no centro da estaca -->
+        <line x1="${px - 4}" y1="${py}" x2="${px + 4}" y2="${py}" stroke="#fff" stroke-width="1.2" />
+        <line x1="${px}" y1="${py - 4}" x2="${px}" y2="${py + 4}" stroke="#fff" stroke-width="1.2" />
+        <text x="${px}" y="${py + pileR_px + 13}" font-family="IBM Plex Mono" font-size="10" font-weight="700" fill="#334155" text-anchor="middle">E${idx+1}</text>
+      `;
+    });
+  }
+
+  // Cotas de Dimensão do Bloco (Superior e Direita)
+  out += `
+    <!-- Cota Superior: Largura B -->
+    <line x1="${blocoX}" y1="${blocoY - 18}" x2="${blocoX + blocoL_px}" y2="${blocoY - 18}" stroke="#475569" stroke-width="1.5" />
+    <line x1="${blocoX}" y1="${blocoY - 24}" x2="${blocoX}" y2="${blocoY - 12}" stroke="#475569" stroke-width="1.5" />
+    <line x1="${blocoX + blocoL_px}" y1="${blocoY - 24}" x2="${blocoX + blocoL_px}" y2="${blocoY - 12}" stroke="#475569" stroke-width="1.5" />
+    <rect x="${cx - 40}" y="${blocoY - 30}" width="80" height="20" fill="#fff" rx="4" />
+    <text x="${cx}" y="${blocoY - 15}" font-family="IBM Plex Mono" font-size="12" font-weight="700" fill="#1e293b" text-anchor="middle">B = ${B.toFixed(2)} m</text>
+
+    <!-- Cota Lateral: Comprimento B -->
+    <line x1="${blocoX + blocoL_px + 18}" y1="${blocoY}" x2="${blocoX + blocoL_px + 18}" y2="${blocoY + blocoL_px}" stroke="#475569" stroke-width="1.5" />
+    <line x1="${blocoX + blocoL_px + 12}" y1="${blocoY}" x2="${blocoX + blocoL_px + 24}" y2="${blocoY}" stroke="#475569" stroke-width="1.5" />
+    <line x1="${blocoX + blocoL_px + 12}" y1="${blocoY + blocoL_px}" x2="${blocoX + blocoL_px + 24}" y2="${blocoY + blocoL_px}" stroke="#475569" stroke-width="1.5" />
+    <rect x="${blocoX + blocoL_px + 24}" y="${cy - 10}" width="75" height="20" fill="#fff" rx="4" />
+    <text x="${blocoX + blocoL_px + 60}" y="${cy + 5}" font-family="IBM Plex Mono" font-size="12" font-weight="700" fill="#1e293b" text-anchor="middle">B = ${B.toFixed(2)} m</text>
+  `;
+
+  // Cota de espaçamento entre estacas (se houver pelo menos 2 no eixo X)
+  if (isEstaca && coords.length > 1) {
+    out += `
+      <text x="${cx}" y="${H - 18}" font-family="IBM Plex Mono" font-size="11" font-weight="600" fill="#475569" text-anchor="middle">Espaçamento entre eixos: s = ${sEstacas.toFixed(2)} m (Balanço = ${((B - (coords[1].x - coords[0].x))/2).toFixed(2)} m)</text>
+    `;
+  }
+
+  svg.innerHTML = out;
+}
+
+function copySummaryText() {
+  const vol = document.getElementById('inpVolume').value;
+  const d = document.getElementById('inpDiametro').value;
+  const h = document.getElementById('inpH').value;
+  const n = document.getElementById('selNumEstacas').value;
+  const pmax = document.getElementById('txtChkComp').innerText;
+  const ptrac = document.getElementById('txtChkTrac').innerText;
+  const bloco = document.getElementById('inpLadoBloco').value;
+  const hbloco = document.getElementById('inpHBloco').value;
+
+  const txt = `MOURA BARRETTO ENGENHARIA - RESUMO TÉCNICO DE FUNDAÇÃO\n` +
+    `Obra: Nova Sede DPT Salvador / BA\n` +
+    `Elemento: Fundação de Reservatório Metálico (${vol} m³)\n` +
+    `Geometria: Diâmetro D = ${d} m | Altura H = ${h} m\n` +
+    `Fundação: Bloco ${bloco} x ${bloco} x ${hbloco} m sobre ${n} estacas Hélice Contínua Ø40 cm (L = 15.0 m)\n` +
+    `Verificação Compressão: ${pmax}\n` +
+    `Verificação Tração / Vento Vazio: ${ptrac}\n` +
+    `Critérios: NBR 6118 / NBR 6123 / NBR 6122 (Método Teixeira)`;
+
+  navigator.clipboard.writeText(txt).then(() => {
+    showToast("Resumo técnico copiado para a área de transferência!");
+  });
+}
+
+// Inicialização
+window.addEventListener('DOMContentLoaded', () => {
+  const d = new Date();
+  const dtStr = d.toLocaleDateString('pt-BR');
+  const pe = document.getElementById('printDate');
+  if (pe) pe.innerText = dtStr;
+
+  recalc();
+});
+</script>
+
+</body>
+</html>
