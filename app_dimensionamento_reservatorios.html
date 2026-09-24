@@ -835,6 +835,10 @@ footer {
       <span>CIT-CEC 32 m³</span>
       <span class="p-pill">Sapata Rasa</span>
     </button>
+    <button type="button" class="preset-btn" id="btnPresetCustom" onclick="loadBlankModel()" style="border: 1.5px dashed var(--amarelo); background: #fffcf9;">
+      <span>📝 Novo em Branco</span>
+      <span class="p-pill" style="background: var(--amarelo-bg); color: var(--amarelo-d); font-weight:700;">Personalizado</span>
+    </button>
   </div>
 
   <!-- Painel de Checagens Rápidas (Status Cards) -->
@@ -1600,8 +1604,46 @@ const PRESETS = {
     padmC: 50.0,
     padmT: 20.0,
     sigmaAdm: 1.0
+  },
+  CUSTOM: {
+    name: "Novo Modelo Personalizado (Em Branco)",
+    tipoFun: "estaca",
+    volume: 100,
+    diametro: 3.00,
+    h: 15.00,
+    folgaTeto: 1.00,
+    espChapa: 4.75,
+    percAcess: 20,
+    v0: 30,
+    s1: 1.0,
+    s2: 1.00,
+    s3: 1.0,
+    ca: 0.85,
+    excPerc: 5.0,
+    numEstacas: "8",
+    diamEstaca: 40,
+    espacEstacas: 1.20,
+    comprEstaca: 12.0,
+    ladoBloco: 4.00,
+    hBloco: 1.00,
+    cobrimento: 5.0,
+    fck: 30,
+    fyk: 500,
+    padmC: 45.0,
+    padmT: 25.0,
+    sigmaAdm: 1.0
   }
 };
+
+function loadBlankModel() {
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('btnPresetCustom');
+  if (btn) btn.classList.add('active');
+
+  loadPreset('CUSTOM');
+  setGeoMode('MANUAL');
+  showToast("📝 Modo em Branco / Personalizado ativado! Insira livremente as dimensões e parâmetros.");
+}
 
 let currentTab = 'elev';
 let currentGeoMode = 'DH_TO_V'; // 'DH_TO_V' | 'DV_TO_H' | 'MANUAL'
