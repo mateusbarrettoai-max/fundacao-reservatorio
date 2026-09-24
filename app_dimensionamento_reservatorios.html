@@ -323,6 +323,12 @@ header.top { background: #ffffff; color: var(--tinta); border-bottom: 1px solid 
   background: transparent;
   color: var(--tinta);
 }
+.inputbox input[type="text"] {
+  text-align: left;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 13.5px;
+  letter-spacing: .01em;
+}
 .inputbox select {
   text-align: left;
   cursor: pointer;
@@ -342,6 +348,88 @@ header.top { background: #ffffff; color: var(--tinta); border-bottom: 1px solid 
   min-width: 44px;
   justify-content: center;
   user-select: none;
+}
+
+/* Botões de Ação para Gerenciamento de Modelos */
+.btn-toggle-badge {
+  background: var(--papel);
+  border: 1px solid var(--linha-2);
+  color: var(--tinta-2);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all .15s ease;
+  margin-left: auto;
+}
+.btn-toggle-badge:hover {
+  background: #ffffff;
+  color: var(--tinta);
+  border-color: var(--amarelo);
+}
+.btn-action-small {
+  background: #ffffff;
+  border: 1.5px solid var(--linha-2);
+  color: var(--tinta);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all .15s ease;
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+.btn-action-small:hover {
+  background: #fff;
+  border-color: var(--amarelo);
+  color: var(--amarelo-d);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+.btn-action-small.btn-primary {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #c2410c;
+}
+.btn-action-small.btn-primary:hover {
+  background: var(--amarelo);
+  border-color: var(--amarelo);
+  color: #ffffff;
+}
+.user-preset-chip-wrapper {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+.btn-del-preset {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  border-radius: 50%;
+  width: 19px;
+  height: 19px;
+  font-size: 10.5px;
+  font-weight: 800;
+  cursor: pointer;
+  position: absolute;
+  right: -5px;
+  top: -6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  transition: all .12s ease;
+}
+.btn-del-preset:hover {
+  background: #dc2626;
+  color: #ffffff;
+  transform: scale(1.15);
 }
 
 /* Modo de Cálculo Geométrico Reativo */
@@ -787,10 +875,13 @@ footer {
     <div class="eyebrow">Rotina Automatizada de Engenharia Estrutural & Geotécnica</div>
     <h1>Dimensionamento de Fundações para Reservatórios Metálicos</h1>
     <p>Cálculo integrado de esforços solicitantes na base (peso da água, estrutura metálica e ação dinâmica do vento NBR 6123), distribuição de reações pelo método de Schiel, dimensionamento geotécnico de estacas (método de Teixeira - NBR 6122) e dimensionamento de blocos de coroamento por bielas e tirantes (NBR 6118).</p>
-    <div class="badges-bar">
+    <div class="badges-bar" id="heroBadgesBar">
       <span class="tag-chip">Normas: <b>NBR 6118:2023 · NBR 6123:2023 · NBR 6122:2019</b></span>
-      <span class="tag-chip">Obra Alvo: <b>Nova Sede DPT Salvador / BA</b></span>
-      <span class="tag-chip">Solução: <b>Estacas Hélice Contínua Monitoradas Ø40 cm</b></span>
+      <span class="tag-chip" id="chipObraAlvo">Obra Alvo: <b id="lblObraBadge">Nova Sede DPT Salvador / BA</b></span>
+      <span class="tag-chip" id="chipSolucao">Solução: <b id="lblSolucaoBadge">Estacas Hélice Contínua Monitoradas Ø40 cm</b></span>
+      <button type="button" class="btn-toggle-badge" id="btnToggleHeroBadges" onclick="toggleHeroBadges()" title="Alternar visibilidade das informações de obra no topo">
+        <span id="txtToggleHeroBadges">👁️ Ocultar cabeçalho do topo</span>
+      </button>
     </div>
   </div>
 </section>
@@ -807,38 +898,62 @@ footer {
           <b>MEMORIAL DE CÁLCULO ESTRUTURAL E GEOTÉCNICO DE FUNDAÇÃO</b>
         </td>
         <td style="border:none; text-align:right; font-size:12px;">
-          Obra: <b>Nova Sede DPT - Salvador / BA</b><br>
-          Proprietário: <b>CONDER / Governo da Bahia</b><br>
-          Responsável: <b>Mateus Moura Barretto - CREA-BA 051805952-9</b><br>
+          Obra: <b id="printObraNome">Nova Sede DPT - Salvador / BA</b><br>
+          Proprietário: <b id="printClienteRef">CONDER / Governo da Bahia</b><br>
+          Responsável: <b id="printRespTec">Mateus Moura Barretto - CREA-BA 051805952-9</b><br>
           Data: <span id="printDate"></span>
         </td>
       </tr>
     </table>
   </div>
 
-  <!-- Presets Rápidos -->
+  <!-- Presets Rápidos & Gerenciador de Modelos -->
   <div class="presets-card">
-    <span class="presets-label">Carregar Modelo:</span>
-    <button type="button" class="preset-btn active" id="btnPresetDPT160" onclick="loadPreset('DPT160')">
-      <span>DPT Salvador 160 m³</span>
-      <span class="p-pill">Hélice Ø40</span>
-    </button>
-    <button type="button" class="preset-btn" id="btnPresetDPT100" onclick="loadPreset('DPT100')">
-      <span>DPT Salvador 100 m³</span>
-      <span class="p-pill">Hélice Ø40</span>
-    </button>
-    <button type="button" class="preset-btn" id="btnPresetVITCIE" onclick="loadPreset('VITCIE')">
-      <span>VIT-CIE 143 m³</span>
-      <span class="p-pill">16 Estacas</span>
-    </button>
-    <button type="button" class="preset-btn" id="btnPresetCITCEC" onclick="loadPreset('CITCEC')">
-      <span>CIT-CEC 32 m³</span>
-      <span class="p-pill">Sapata Rasa</span>
-    </button>
-    <button type="button" class="preset-btn" id="btnPresetCustom" onclick="loadBlankModel()" style="border: 1.5px dashed var(--amarelo); background: #fffcf9;">
-      <span>📝 Novo em Branco</span>
-      <span class="p-pill" style="background: var(--amarelo-bg); color: var(--amarelo-d); font-weight:700;">Personalizado</span>
-    </button>
+    <div style="display:flex; justify-content:space-between; align-items:center; width:100%; flex-wrap:wrap; gap:10px; border-bottom:1px solid var(--linha); padding-bottom:10px; margin-bottom:8px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="presets-label" style="margin:0;">Modelos de Referência & Projetos:</span>
+        <span style="font-size:11.5px; color:var(--tinta-muted);">Alterne entre os padrões da rotina ou crie e salve novos</span>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <button type="button" class="btn-action-small btn-primary" onclick="saveCurrentAsUserPreset()" title="Salvar a configuração atual como um modelo reutilizável nos atalhos">
+          <span>💾 Salvar este Modelo</span>
+        </button>
+        <button type="button" class="btn-action-small" onclick="exportModelJson()" title="Baixar arquivo JSON com os parâmetros deste reservatório">
+          <span>📥 Exportar JSON</span>
+        </button>
+        <button type="button" class="btn-action-small" onclick="importModelJsonTrigger()" title="Carregar parâmetros de um arquivo JSON salvo no seu computador">
+          <span>📤 Importar JSON</span>
+        </button>
+        <input type="file" id="inpJsonFile" accept=".json" style="display:none;" onchange="handleJsonFileSelect(event)">
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; width:100%;">
+      <span style="font-size:11.5px; font-weight:700; color:var(--tinta-muted); text-transform:uppercase; letter-spacing:.04em;">Padrões:</span>
+      <button type="button" class="preset-btn active" id="btnPresetDPT160" onclick="loadPreset('DPT160')">
+        <span>DPT Salvador 160 m³</span>
+        <span class="p-pill">Hélice Ø40</span>
+      </button>
+      <button type="button" class="preset-btn" id="btnPresetDPT100" onclick="loadPreset('DPT100')">
+        <span>DPT Salvador 100 m³</span>
+        <span class="p-pill">Hélice Ø40</span>
+      </button>
+      <button type="button" class="preset-btn" id="btnPresetVITCIE" onclick="loadPreset('VITCIE')">
+        <span>VIT-CIE 143 m³</span>
+        <span class="p-pill">16 Estacas</span>
+      </button>
+      <button type="button" class="preset-btn" id="btnPresetCITCEC" onclick="loadPreset('CITCEC')">
+        <span>CIT-CEC 32 m³</span>
+        <span class="p-pill">Sapata Rasa</span>
+      </button>
+      <button type="button" class="preset-btn" id="btnPresetCustom" onclick="loadBlankModel()" style="border: 1.5px dashed var(--amarelo); background: #fffcf9;">
+        <span id="lblBtnCustom">📝 Novo em Branco</span>
+        <span class="p-pill" id="pillBtnCustom" style="background: var(--amarelo-bg); color: var(--amarelo-d); font-weight:700;">Personalizado</span>
+      </button>
+
+      <!-- Modelos salvos pelo usuário serão inseridos aqui dinamicamente -->
+      <span id="userPresetsArea" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;"></span>
+    </div>
   </div>
 
   <!-- Painel de Checagens Rápidas (Status Cards) -->
@@ -870,6 +985,63 @@ footer {
 
     <!-- Coluna Esquerda: Formulários de Entrada -->
     <div class="col-inputs">
+
+      <!-- Card 0: Identificação da Obra e Solução Adotada -->
+      <div class="card" id="cardIdentificacao">
+        <div class="card-head">
+          <h3>0. Identificação do Projeto & Solução</h3>
+          <span class="card-tag" style="background:#fff7ed; color:#c2410c; border-color:#fed7aa;">Metadados & Memorial</span>
+        </div>
+
+        <div class="field">
+          <label>Nome da Obra / Referência
+            <small>Identificação do projeto para cabeçalho, abas e memorial de cálculo</small>
+          </label>
+          <div class="inputbox">
+            <input type="text" id="inpObraNome" value="Nova Sede DPT Salvador / BA" oninput="onObraInfoChange()" placeholder="Ex: Reservatório Metálico Central - Hospital Regional">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Solução de Fundação Adotada
+            <small>Selecione uma sugestão ou digite livremente o tipo de fundação</small>
+          </label>
+          <div class="inputbox">
+            <input type="text" id="inpSolucaoNome" list="listSolucoesSugeridas" value="Estacas Hélice Contínua Monitoradas Ø40 cm" oninput="onObraInfoChange()" placeholder="Ex: Estacas Hélice Contínua Ø40 cm ou Sapata Rasa">
+            <datalist id="listSolucoesSugeridas">
+              <option value="Estacas Hélice Contínua Monitoradas Ø40 cm">
+              <option value="Estacas Hélice Contínua Monitoradas Ø50 cm">
+              <option value="Estacas Escavadas com Trado Mecânico Ø40 cm">
+              <option value="Estacas Escavadas com Trado Mecânico Ø50 cm">
+              <option value="Estacas Pré-Moldadas de Concreto 20×20 cm">
+              <option value="Estacas Raiz Ø31 cm com Injeção">
+              <option value="Sapata Rasa Circular Armada (Fundação Direta)">
+              <option value="Sapata Corrida Circular em Concreto Armado">
+              <option value="Radier Circular em Concreto Armado">
+              <option value="Tubulão a Céu Aberto com Base Alargada">
+            </datalist>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div class="field">
+            <label>Cliente / Proprietário
+              <small>Órgão contratante</small>
+            </label>
+            <div class="inputbox">
+              <input type="text" id="inpClienteRef" value="CONDER / Governo da Bahia" oninput="onObraInfoChange()" placeholder="Ex: CONDER / Governo da Bahia">
+            </div>
+          </div>
+          <div class="field">
+            <label>Responsável Técnico / CREA
+              <small>Autor do dimensionamento</small>
+            </label>
+            <div class="inputbox">
+              <input type="text" id="inpRespTec" value="Mateus Moura Barretto - CREA-BA 051805952-9" oninput="onObraInfoChange()">
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Card 1: Geometria do Reservatório Metálico -->
       <div class="card">
@@ -1495,6 +1667,10 @@ footer {
 const PRESETS = {
   DPT160: {
     name: "DPT Salvador - 160 m³",
+    obraNome: "Nova Sede DPT Salvador / BA",
+    solucaoNome: "Estacas Hélice Contínua Monitoradas Ø40 cm",
+    clienteRef: "CONDER / Governo da Bahia",
+    respTec: "Mateus Moura Barretto - CREA-BA 051805952-9",
     tipoFun: "estaca",
     volume: 160,
     diametro: 3.18,
@@ -1523,6 +1699,10 @@ const PRESETS = {
   },
   DPT100: {
     name: "DPT Salvador - 100 m³",
+    obraNome: "Nova Sede DPT Salvador / BA - 100 m³",
+    solucaoNome: "Estacas Hélice Contínua Monitoradas Ø40 cm",
+    clienteRef: "CONDER / Governo da Bahia",
+    respTec: "Mateus Moura Barretto - CREA-BA 051805952-9",
     tipoFun: "estaca",
     volume: 100,
     diametro: 3.18,
@@ -1551,6 +1731,10 @@ const PRESETS = {
   },
   VITCIE: {
     name: "VIT-CIE - 143 m³ (Referência Validada)",
+    obraNome: "VIT-CIE Reservatório Metálico 143 m³",
+    solucaoNome: "Bloco sobre 16 Estacas Escavadas Ø40 cm",
+    clienteRef: "Referência Técnica / Projeto Padrão",
+    respTec: "Mateus Moura Barretto - CREA-BA 051805952-9",
     tipoFun: "estaca",
     volume: 143,
     diametro: 3.18,
@@ -1579,6 +1763,10 @@ const PRESETS = {
   },
   CITCEC: {
     name: "CIT-CEC - 32 m³ (Sapata Superficial)",
+    obraNome: "CIT-CEC - Reservatório Metálico 32 m³",
+    solucaoNome: "Sapata Rasa Circular Armada (Fundação Direta)",
+    clienteRef: "Referência Técnica / Projeto Padrão",
+    respTec: "Mateus Moura Barretto - CREA-BA 051805952-9",
     tipoFun: "superficial",
     volume: 32,
     diametro: 2.20,
@@ -1607,6 +1795,10 @@ const PRESETS = {
   },
   CUSTOM: {
     name: "Novo Modelo Personalizado (Em Branco)",
+    obraNome: "Novo Reservatório Metálico",
+    solucaoNome: "Estacas Hélice Contínua Monitoradas Ø40 cm",
+    clienteRef: "Cliente / Empreendimento",
+    respTec: "Mateus Moura Barretto - CREA-BA 051805952-9",
     tipoFun: "estaca",
     volume: 100,
     diametro: 3.00,
@@ -1757,13 +1949,308 @@ function onFolgaInput() {
   }
 }
 
+let activePresetKey = 'DPT160';
+let isHeroBadgesVisible = true;
+const USER_PRESETS_KEY = 'mb_reservatorio_user_presets_v1';
+
+function toggleHeroBadges() {
+  isHeroBadgesVisible = !isHeroBadgesVisible;
+  applyHeroBadgesVisibility();
+  saveState();
+  showToast(isHeroBadgesVisible ? "Cabeçalho de obra exibido no topo." : "Cabeçalho de obra ocultado do topo.");
+}
+
+function applyHeroBadgesVisibility() {
+  const chipObra = document.getElementById('chipObraAlvo');
+  const chipSolucao = document.getElementById('chipSolucao');
+  const txtToggle = document.getElementById('txtToggleHeroBadges');
+  if (chipObra) chipObra.style.display = isHeroBadgesVisible ? 'inline-flex' : 'none';
+  if (chipSolucao) chipSolucao.style.display = isHeroBadgesVisible ? 'inline-flex' : 'none';
+  if (txtToggle) {
+    txtToggle.innerHTML = isHeroBadgesVisible ? '👁️ Ocultar cabeçalho do topo' : '👁️ Exibir cabeçalho no topo';
+  }
+}
+
+function onObraInfoChange() {
+  const elObra = document.getElementById('inpObraNome');
+  const elSolucao = document.getElementById('inpSolucaoNome');
+  const elCliente = document.getElementById('inpClienteRef');
+  const elResp = document.getElementById('inpRespTec');
+
+  const obraNome = (elObra && elObra.value.trim()) ? elObra.value.trim() : 'Novo Reservatório';
+  const solucaoNome = (elSolucao && elSolucao.value.trim()) ? elSolucao.value.trim() : 'Não especificada';
+  const clienteRef = (elCliente && elCliente.value.trim()) ? elCliente.value.trim() : 'Não informado';
+  const respTec = (elResp && elResp.value.trim()) ? elResp.value.trim() : 'Eng. Mateus Moura Barretto';
+
+  // 1. Atualizar badges no banner Hero
+  const lblObra = document.getElementById('lblObraBadge');
+  if (lblObra) lblObra.innerText = obraNome;
+  const lblSolucao = document.getElementById('lblSolucaoBadge');
+  if (lblSolucao) lblSolucao.innerText = solucaoNome;
+
+  // 2. Atualizar cabeçalho para impressão / PDF
+  const prObra = document.getElementById('printObraNome');
+  if (prObra) prObra.innerText = obraNome;
+  const prCliente = document.getElementById('printClienteRef');
+  if (prCliente) prCliente.innerText = clienteRef;
+  const prResp = document.getElementById('printRespTec');
+  if (prResp) prResp.innerText = respTec;
+
+  // 3. Atualizar botão do modelo Personalizado
+  const lblCustom = document.getElementById('lblBtnCustom');
+  if (lblCustom && activePresetKey === 'CUSTOM') {
+    const shortName = obraNome.length > 20 ? obraNome.slice(0, 18) + '...' : obraNome;
+    lblCustom.innerText = `📝 ${shortName}`;
+  }
+
+  saveState();
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  })[m]);
+}
+
+function getUserPresets() {
+  try {
+    const raw = localStorage.getItem(USER_PRESETS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveUserPresetsList(list) {
+  try {
+    localStorage.setItem(USER_PRESETS_KEY, JSON.stringify(list));
+  } catch (e) {
+    console.warn('Erro ao salvar lista de modelos:', e);
+  }
+}
+
+function saveCurrentAsUserPreset() {
+  const currentObra = document.getElementById('inpObraNome').value.trim() || 'Meu Reservatório';
+  const vol = document.getElementById('inpVolume').value;
+  const defaultTitle = `${currentObra} (${vol} m³)`;
+
+  const name = prompt("💾 SALVAR MODELO PERSONALIZADO:\nDigite o título para este modelo nos seus atalhos:", defaultTitle);
+  if (!name || !name.trim()) return;
+
+  const currentValues = {};
+  const ids = [
+    'inpObraNome', 'inpSolucaoNome', 'inpClienteRef', 'inpRespTec',
+    'inpVolume', 'inpDiametro', 'inpH', 'inpFolgaTeto', 'inpEspChapa', 'inpPercAcess',
+    'inpV0', 'inpS1', 'inpS2', 'inpS3', 'inpCa', 'inpExcPerc',
+    'selTipoFun', 'selNumEstacas', 'inpDiamEstaca', 'inpEspacEstacas', 'inpComprEstaca',
+    'inpLadoBloco', 'inpHBloco', 'inpCobrimento', 'inpFck', 'inpFyk',
+    'inpPadmC', 'inpPadmT', 'inpSigmaAdm'
+  ];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) currentValues[id] = el.value;
+  });
+
+  const newPreset = {
+    id: 'usr_' + Date.now(),
+    name: name.trim(),
+    volume: vol,
+    values: currentValues,
+    geoMode: currentGeoMode,
+    createdAt: new Date().toISOString()
+  };
+
+  const list = getUserPresets();
+  list.push(newPreset);
+  saveUserPresetsList(list);
+  renderUserPresetButtons();
+  loadUserPreset(newPreset.id);
+  showToast(`✅ Modelo "${newPreset.name}" salvo com sucesso nos seus atalhos!`);
+}
+
+function renderUserPresetButtons() {
+  const container = document.getElementById('userPresetsArea');
+  if (!container) return;
+  const list = getUserPresets();
+  if (list.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  let html = `<span style="font-size:11px; font-weight:700; color:var(--amarelo-d); margin-left:6px; text-transform:uppercase; letter-spacing:.04em;">Meus Modelos:</span>`;
+  list.forEach(p => {
+    const isActive = (activePresetKey === p.id) ? 'active' : '';
+    html += `
+      <div class="user-preset-chip-wrapper">
+        <button type="button" class="preset-btn ${isActive}" id="btnUserPreset_${p.id}" onclick="loadUserPreset('${p.id}')" title="Carregar modelo salvo em ${new Date(p.createdAt).toLocaleDateString()}">
+          <span>📁 ${escapeHtml(p.name)}</span>
+          <span class="p-pill">${p.volume} m³</span>
+        </button>
+        <button type="button" class="btn-del-preset" onclick="deleteUserPreset('${p.id}', event)" title="Excluir este modelo salvo">✕</button>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function loadUserPreset(id) {
+  const list = getUserPresets();
+  const p = list.find(item => item.id === id);
+  if (!p) return;
+
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('btnUserPreset_' + id);
+  if (btn) btn.classList.add('active');
+
+  activePresetKey = id;
+
+  if (p.values) {
+    for (const [fieldId, val] of Object.entries(p.values)) {
+      const el = document.getElementById(fieldId);
+      if (el && val !== undefined) el.value = val;
+    }
+  }
+
+  if (p.geoMode) {
+    setGeoMode(p.geoMode, false);
+  }
+
+  onTipoFunChange(false);
+  onObraInfoChange();
+  recalc();
+  showToast(`Modelo carregado: ${p.name}`);
+}
+
+function deleteUserPreset(id, ev) {
+  if (ev) ev.stopPropagation();
+  const list = getUserPresets();
+  const p = list.find(item => item.id === id);
+  if (!p) return;
+
+  if (!confirm(`Deseja realmente excluir o modelo salvo "${p.name}"?`)) return;
+
+  const newList = list.filter(item => item.id !== id);
+  saveUserPresetsList(newList);
+  renderUserPresetButtons();
+
+  if (activePresetKey === id) {
+    loadPreset('DPT160');
+  }
+  showToast(`Modelo "${p.name}" excluído.`);
+}
+
+// Exportar Modelo Atual como Arquivo JSON
+function exportModelJson() {
+  const obraNome = document.getElementById('inpObraNome').value.trim() || 'Reservatorio';
+  const vol = document.getElementById('inpVolume').value;
+  const currentValues = {};
+  const ids = [
+    'inpObraNome', 'inpSolucaoNome', 'inpClienteRef', 'inpRespTec',
+    'inpVolume', 'inpDiametro', 'inpH', 'inpFolgaTeto', 'inpEspChapa', 'inpPercAcess',
+    'inpV0', 'inpS1', 'inpS2', 'inpS3', 'inpCa', 'inpExcPerc',
+    'selTipoFun', 'selNumEstacas', 'inpDiamEstaca', 'inpEspacEstacas', 'inpComprEstaca',
+    'inpLadoBloco', 'inpHBloco', 'inpCobrimento', 'inpFck', 'inpFyk',
+    'inpPadmC', 'inpPadmT', 'inpSigmaAdm'
+  ];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) currentValues[id] = el.value;
+  });
+
+  const exportData = {
+    app: "MouraBarretto_Reservatorios",
+    version: "2.0",
+    name: obraNome,
+    exportedAt: new Date().toISOString(),
+    geoMode: currentGeoMode,
+    values: currentValues
+  };
+
+  const jsonStr = JSON.stringify(exportData, null, 2);
+  const blob = new Blob([jsonStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const safeFilename = obraNome.replace(/[^a-zA-Z0-9_-]/g, '_') + `_${vol}m3.json`;
+  a.href = url;
+  a.download = safeFilename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`📥 Arquivo "${safeFilename}" baixado com sucesso!`);
+}
+
+// Importar Modelo de Arquivo JSON
+function importModelJsonTrigger() {
+  const fileInput = document.getElementById('inpJsonFile');
+  if (fileInput) fileInput.click();
+}
+
+function handleJsonFileSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data || !data.values) {
+        alert("Arquivo JSON inválido ou incompatível.");
+        return;
+      }
+
+      for (const [id, val] of Object.entries(data.values)) {
+        const el = document.getElementById(id);
+        if (el && val !== undefined) el.value = val;
+      }
+
+      if (data.geoMode) {
+        setGeoMode(data.geoMode, false);
+      }
+
+      activePresetKey = 'CUSTOM';
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      const btn = document.getElementById('btnPresetCustom');
+      if (btn) btn.classList.add('active');
+
+      onTipoFunChange(false);
+      onObraInfoChange();
+      recalc();
+      showToast(`📤 Modelo "${data.name || file.name}" importado com sucesso!`);
+    } catch (err) {
+      alert("Erro ao ler o arquivo JSON: " + err.message);
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
 function loadPreset(key) {
   const p = PRESETS[key];
   if (!p) return;
 
+  activePresetKey = key;
+
   document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
   const btn = document.getElementById('btnPreset' + key);
   if (btn) btn.classList.add('active');
+
+  // Metadados do projeto
+  if (p.obraNome) document.getElementById('inpObraNome').value = p.obraNome;
+  if (p.solucaoNome) document.getElementById('inpSolucaoNome').value = p.solucaoNome;
+  if (p.clienteRef) document.getElementById('inpClienteRef').value = p.clienteRef;
+  if (p.respTec) document.getElementById('inpRespTec').value = p.respTec;
+
+  // Restaurar rótulo do botão customizado se não for CUSTOM
+  const lblCustom = document.getElementById('lblBtnCustom');
+  if (lblCustom && key !== 'CUSTOM') {
+    lblCustom.innerText = '📝 Novo em Branco';
+  }
 
   document.getElementById('selTipoFun').value = p.tipoFun;
   document.getElementById('inpVolume').value = p.volume;
@@ -1794,6 +2281,7 @@ function loadPreset(key) {
   document.getElementById('inpSigmaAdm').value = p.sigmaAdm;
 
   onTipoFunChange();
+  onObraInfoChange();
   recalc();
   showToast("Preset carregado: " + p.name);
 }
@@ -1805,6 +2293,7 @@ function saveState() {
   if (isRestoringState) return;
   try {
     const ids = [
+      'inpObraNome', 'inpSolucaoNome', 'inpClienteRef', 'inpRespTec',
       'inpVolume', 'inpDiametro', 'inpH', 'inpFolgaTeto', 'inpEspChapa', 'inpPercAcess',
       'inpV0', 'inpS1', 'inpS2', 'inpS3', 'inpCa', 'inpExcPerc',
       'selTipoFun', 'selNumEstacas', 'inpDiamEstaca', 'inpEspacEstacas', 'inpComprEstaca',
@@ -1816,6 +2305,8 @@ function saveState() {
       geoMode: currentGeoMode,
       tab: currentTab,
       diagHypo: currentBaseDiagHypo,
+      activePresetKey: activePresetKey,
+      heroBadgesVisible: isHeroBadgesVisible,
       timestamp: Date.now()
     };
     ids.forEach(id => {
@@ -1846,6 +2337,15 @@ function loadSavedState() {
       }
     }
 
+    if (data.heroBadgesVisible !== undefined) {
+      isHeroBadgesVisible = data.heroBadgesVisible;
+      applyHeroBadgesVisibility();
+    }
+
+    if (data.activePresetKey) {
+      activePresetKey = data.activePresetKey;
+    }
+
     // Modo geométrico sem disparar recálculo que sobrescreva os inputs restaurados
     if (data.geoMode) {
       setGeoMode(data.geoMode, false);
@@ -1868,6 +2368,7 @@ function loadSavedState() {
     }
 
     onTipoFunChange(false);
+    onObraInfoChange();
     isRestoringState = false;
     updateSaveIndicator(true);
     return true;
@@ -2752,12 +3253,17 @@ function copySummaryText() {
   const ptrac = document.getElementById('txtChkTrac').innerText;
   const bloco = document.getElementById('inpLadoBloco').value;
   const hbloco = document.getElementById('inpHBloco').value;
+  const elObra = document.getElementById('inpObraNome');
+  const elSolucao = document.getElementById('inpSolucaoNome');
+  const obra = (elObra && elObra.value) ? elObra.value : 'Nova Sede DPT Salvador / BA';
+  const solucao = (elSolucao && elSolucao.value) ? elSolucao.value : 'Estacas Hélice Contínua Ø40 cm';
 
   const txt = `MOURA BARRETTO ENGENHARIA - RESUMO TÉCNICO DE FUNDAÇÃO\n` +
-    `Obra: Nova Sede DPT Salvador / BA\n` +
+    `Obra: ${obra}\n` +
+    `Solução Adotada: ${solucao}\n` +
     `Elemento: Fundação de Reservatório Metálico (${vol} m³)\n` +
     `Geometria: Diâmetro D = ${d} m | Altura H = ${h} m\n` +
-    `Fundação: Bloco ${bloco} x ${bloco} x ${hbloco} m sobre ${n} estacas Hélice Contínua Ø40 cm (L = 15.0 m)\n` +
+    `Fundação: Bloco ${bloco} x ${bloco} x ${hbloco} m sobre ${n} estacas\n` +
     `Verificação Compressão: ${pmax}\n` +
     `Verificação Tração / Vento Vazio: ${ptrac}\n` +
     `Critérios: NBR 6118 / NBR 6123 / NBR 6122 (Método Teixeira)`;
@@ -2774,9 +3280,13 @@ window.addEventListener('DOMContentLoaded', () => {
   const pe = document.getElementById('printDate');
   if (pe) pe.innerText = dtStr;
 
+  renderUserPresetButtons();
+  applyHeroBadgesVisibility();
+
   const restored = loadSavedState();
   if (!restored) {
     onTipoFunChange();
+    onObraInfoChange();
   }
   recalc();
 });
