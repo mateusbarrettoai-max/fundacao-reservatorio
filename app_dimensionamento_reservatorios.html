@@ -1537,14 +1537,14 @@ const PRESETS = {
     diametro: 3.18,
     h: 21.30,
     folgaTeto: 3.30,
-    espChapa: 6.35,
-    percAcess: 20,
-    v0: 30,
+    espChapa: 4.79,
+    percAcess: 57.27,
+    v0: 45,
     s1: 1.0,
-    s2: 1.00,
+    s2: 1.10,
     s3: 1.0,
-    ca: 1.00,
-    excPerc: 5.0,
+    ca: 0.70,
+    excPerc: 1.57,
     numEstacas: "16",
     diamEstaca: 40,
     espacEstacas: 1.20,
@@ -1818,29 +1818,29 @@ function drawBaseDiagram() {
   const q_kPa = q_N_m2 / 1000.0;
   const Aproj = D * H;
   const Fv_kN = q_kPa * Ca * Aproj;
-  const Fv_tf = Fv_kN / 10.0;
+  const Fv_kgf = (Fv_kN * 1000.0) / 9.80665;
+  const Fv_tf = Fv_kgf / 1000.0;
 
-  const Mv_kNm = Fv_kN * (H / 2.0);
-  const Mv_tfm = Mv_kNm / 10.0;
+  const Mv_kgfm = Fv_kgf * (H / 2.0);
+  const Mv_tfm = Mv_kgfm / 1000.0;
+  const Mv_kNm = (Mv_kgfm * 9.80665) / 1000.0;
 
   const e_acc_m = (excPerc / 100.0) * D;
-  const Me_kNm = e_acc_m * (P_agua_kN + N_met_kN);
-  const Me_tfm = Me_kNm / 10.0;
-
-  const M_tot_kNm = Mv_kNm + Me_kNm;
-  const M_tot_tfm = M_tot_kNm / 10.0;
-
   let N_tf = isCheio ? (P_agua_tf + N_met_tf) : N_met_tf;
   let N_kgf = N_tf * 1000.0;
   let N_kN = isCheio ? (P_agua_kN + N_met_kN) : N_met_kN;
 
+  const Me_kgfm = e_acc_m * N_kgf;
+  const Me_tfm = Me_kgfm / 1000.0;
+  const Me_kNm = (Me_kgfm * 9.80665) / 1000.0;
+
   let H_tf = Fv_tf;
-  let H_kgf = H_tf * 1000.0;
+  let H_kgf = Fv_kgf;
   let H_kN = Fv_kN;
 
-  let M_tfm = isCheio ? M_tot_tfm : Mv_tfm;
-  let M_kgfm = M_tfm * 1000.0;
-  let M_kNm = isCheio ? M_tot_kNm : Mv_kNm;
+  let M_tfm = isCheio ? (Mv_tfm + Me_tfm) : Mv_tfm;
+  let M_kgfm = isCheio ? (Mv_kgfm + Me_kgfm) : Mv_kgfm;
+  let M_kNm = isCheio ? (Mv_kNm + Me_kNm) : Mv_kNm;
 
   // Gerar SVG reproduzindo exatamente o padrão da imagem 2
   const svgHtml = `
@@ -1998,17 +1998,21 @@ function recalc() {
   const q_kPa = q_N_m2 / 1000.0;
   const Aproj = D * H;
   const Fv_kN = q_kPa * Ca * Aproj;
-  const Fv_tf = Fv_kN / 10.0;
+  const Fv_kgf = (Fv_kN * 1000.0) / 9.80665;
+  const Fv_tf = Fv_kgf / 1000.0;
 
-  const Mv_kNm = Fv_kN * (H / 2.0);
-  const Mv_tfm = Mv_kNm / 10.0;
+  const Mv_kgfm = Fv_kgf * (H / 2.0);
+  const Mv_tfm = Mv_kgfm / 1000.0;
+  const Mv_kNm = (Mv_kgfm * 9.80665) / 1000.0;
 
   const e_acc_m = (excPerc / 100.0) * D;
-  const Me_kNm = e_acc_m * (P_agua_kN + N_met_kN);
-  const Me_tfm = Me_kNm / 10.0;
+  const Me_kgfm = e_acc_m * (P_agua_tf + N_met_tf) * 1000.0;
+  const Me_tfm = Me_kgfm / 1000.0;
+  const Me_kNm = (Me_kgfm * 9.80665) / 1000.0;
 
+  const M_tot_kgfm = Mv_kgfm + Me_kgfm;
+  const M_tot_tfm = M_tot_kgfm / 1000.0;
   const M_tot_kNm = Mv_kNm + Me_kNm;
-  const M_tot_tfm = M_tot_kNm / 10.0;
 
   // 3. Distribuição de Cargas nas Estacas (Schiel)
   const coords = getPileCoordinates(nEstacas, sEstacas);
@@ -2169,15 +2173,15 @@ function recalc() {
   const N_base_vazio_kN = N_met_kN;
 
   const H_base_tf = Fv_tf;
-  const H_base_kgf = Fv_tf * 1000.0;
+  const H_base_kgf = Fv_kgf;
   const H_base_kN = Fv_kN;
 
   const M_base_cheio_tfm = M_tot_tfm;
-  const M_base_cheio_kgfm = M_tot_tfm * 1000.0;
+  const M_base_cheio_kgfm = M_tot_kgfm;
   const M_base_cheio_kNm = M_tot_kNm;
 
   const M_base_vazio_tfm = Mv_tfm;
-  const M_base_vazio_kgfm = Mv_tfm * 1000.0;
+  const M_base_vazio_kgfm = Mv_kgfm;
   const M_base_vazio_kNm = Mv_kNm;
 
   const H_estaca_tf = H_base_tf / nEstacas;
