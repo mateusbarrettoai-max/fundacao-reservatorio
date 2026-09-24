@@ -1168,8 +1168,9 @@ footer {
     <div class="col-draw">
       <div class="draw-card">
         <div class="draw-tabs">
-          <button type="button" class="tab-btn active" id="tabBtnElev" onclick="switchTab('elev')">Elevação da Torre & Vento</button>
-          <button type="button" class="tab-btn" id="tabBtnPlan" onclick="switchTab('plan')">Planta do Bloco & Estacas</button>
+          <button type="button" class="tab-btn active" id="tabBtnElev" onclick="switchTab('elev')">Elevação da Torre</button>
+          <button type="button" class="tab-btn" id="tabBtnPlan" onclick="switchTab('plan')">Planta do Bloco</button>
+          <button type="button" class="tab-btn" id="tabBtnBase" onclick="switchTab('base')">Diagrama na Base (Pontual)</button>
         </div>
 
         <!-- Vista 1: Elevação do Reservatório e Vento -->
@@ -1191,6 +1192,24 @@ footer {
           <div class="draw-caption">
             <span>Disposição das estacas e contorno do pilar</span>
             <span class="mono" id="lblPlanInfo">Bloco 4.20 × 4.20 m</span>
+          </div>
+        </div>
+
+        <!-- Vista 3: Diagrama do Carregamento à Base (Pontual) -->
+        <div class="draw-view" id="viewBase">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="font-size:12px; font-weight:700; color:var(--tinta-2); text-transform:uppercase;">Hipótese:</span>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="geo-chip active" id="chipRightCheio" onclick="setMemDiagHypo('cheio')">Tanque Cheio</button>
+              <button type="button" class="geo-chip" id="chipRightVazio" onclick="setMemDiagHypo('vazio')">Tanque Vazio</button>
+            </div>
+          </div>
+          <div class="svg-wrap" style="background:#ffffff;">
+            <svg id="svgRightBase" viewBox="0 0 520 320"></svg>
+          </div>
+          <div class="draw-caption">
+            <span>Esforços pontuais na base da torre</span>
+            <span class="mono" id="lblRightBaseCaption">N = 172.85 tf | H = 3.34 tf | M = 63.35 tf·m</span>
           </div>
         </div>
       </div>
@@ -1287,6 +1306,60 @@ footer {
     </div>
   </div>
 
+  <!-- Bloco 2.5: Resumo e Diagrama do Carregamento à Base (Pontual) -->
+  <div class="mem-block" id="blocoDiagBase">
+    <h4>6 - DIAGRAMA DO CARREGAMENTO À BASE (PONTUAL) <span class="ref-chip">Esforços na Base</span></h4>
+    <p style="font-size:13px; color:var(--tinta-2); margin:4px 0 14px;">
+      Resumo executivo dos esforços solicitantes transmitidos à base da torre cilíndrica metálica (força vertical axial, força cortante horizontal do vento e momento fletor de tombamento), conforme convenção clássica de dimensionamento de reservatórios metálicos.
+    </p>
+
+    <!-- Controles da Hipótese -->
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px; background:var(--papel); padding:8px 12px; border-radius:8px; border:1px solid var(--linha);">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:12px; font-weight:700; color:var(--tinta-2); text-transform:uppercase;">Hipótese no Diagrama:</span>
+        <div style="display:flex; gap:6px;">
+          <button type="button" class="geo-chip active" id="chipMemCheio" onclick="setMemDiagHypo('cheio')">1. Tanque Cheio + Vento</button>
+          <button type="button" class="geo-chip" id="chipMemVazio" onclick="setMemDiagHypo('vazio')">3. Tanque Vazio + Vento</button>
+        </div>
+      </div>
+      <div style="font-size:12px; color:var(--tinta-muted); font-weight:600;">
+        Padrão: <b style="color:var(--preto);">Interface Torre Metálica ↔ Bloco</b>
+      </div>
+    </div>
+
+    <!-- Diagrama Vetorial Pontual SVG -->
+    <div style="display:flex; justify-content:center; background:#ffffff; border:1px solid var(--linha); border-radius:10px; padding:16px 12px; margin-bottom:14px;">
+      <svg id="svgMemBaseDiagram" viewBox="0 0 520 310" style="max-width:520px; width:100%; height:auto; display:block;"></svg>
+    </div>
+
+    <!-- Tabela Resumo dos Carregamentos à Base -->
+    <div class="tbl-wrap">
+      <table class="mem-tbl">
+        <thead>
+          <tr>
+            <th>Esforço Solicitante na Base</th>
+            <th>Notação</th>
+            <th class="num">Em kgf / kgf·m</th>
+            <th class="num">Em tf / tf·m</th>
+            <th class="num">Em kN / kN·m</th>
+            <th>Ação Estrutural na Fundação</th>
+          </tr>
+        </thead>
+        <tbody id="tblBaseLoadsBody">
+          <!-- Preenchido via JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:var(--amarelo-bg); border:1px solid #fed7aa; border-radius:8px; padding:10px 14px; margin-top:12px; font-size:12.5px; color:var(--tinta);">
+      <b>💡 Esclarecimento Técnico Fundamental:</b>
+      <ul style="margin:4px 0 0 16px; padding:0; line-height:1.5;">
+        <li><b>Esforços na Base (Diagrama Acima):</b> representam as ações totais descarregadas na base: Carga Normal Vertical ($N_k$), Força Cortante Horizontal ($H_k$) e Momento de Tombamento ($M_k$).</li>
+        <li><b>Cargas por Estaca (Tabela Schiel Abaixo):</b> $P_{max}$ e $P_{min}$ referem-se estritamente aos <b>esforços axiais verticais</b> (compressão/tração) no topo de cada estaca. <b>Não são cargas horizontais.</b> A carga horizontal por estaca é a cortante transversal $H_{estaca} = \frac{H_k}{n}$.</li>
+      </ul>
+    </div>
+  </div>
+
   <!-- Bloco 3: Envoltórias e Distribuição de Cargas nas Estacas (Schiel) -->
   <div class="mem-block">
     <h4>3. Distribuição de Cargas nas Estacas (Método de Schiel) <span class="ref-chip">NBR 6118 / 6122</span></h4>
@@ -1297,8 +1370,9 @@ footer {
             <th>Hipótese de Carregamento</th>
             <th class="num">Carga Vertical (Nk)</th>
             <th class="num">Momento (Mk)</th>
-            <th class="num">Carga Máx. (P_max)</th>
-            <th class="num">Carga Mín. (P_min)</th>
+            <th class="num">Carga Axial Máx. (P_max)</th>
+            <th class="num">Carga Axial Mín. (P_min)</th>
+            <th class="num">Cortante / Estaca (H_est)</th>
             <th>Situação da Fundação</th>
           </tr>
         </thead>
@@ -1308,12 +1382,16 @@ footer {
       </table>
     </div>
     <div class="mem-row" style="margin-top:12px;">
-      <span class="lbl">Fórmula de Schiel:</span>
+      <span class="lbl">Fórmula de Schiel (Reação Axial Vertical):</span>
       <span>P_i = (N_k / n) ± (M_k × y_i) / ∑y_i²</span>
     </div>
     <div class="mem-row">
       <span class="lbl">Inércia do Grupo (∑y_i²):</span>
       <span>∑y_i² = <b class="hl" id="m_sum_y2">6.76</b> <span class="unit">m²</span> (Braço crítico y_max = <span id="m_ymax">1.30</span> m)</span>
+    </div>
+    <div class="mem-row">
+      <span class="lbl">Cortante Horizontal por Estaca:</span>
+      <span>H_estaca = H_k / n = <span id="m_h_tot_txt">3.34</span> tf / <span id="m_n_est_txt">8</span> = <b class="hl" id="m_h_per_estaca">0.42</b> <span class="unit">tf</span> (<span id="m_h_per_estaca_kgf">417.5</span> kgf)</span>
     </div>
     <div class="mem-row">
       <span class="lbl">Capacidade Admissível (Teixeira):</span>
@@ -1672,6 +1750,26 @@ function onTipoFunChange() {
   recalc();
 }
 
+let currentBaseDiagHypo = 'cheio'; // 'cheio' | 'vazio'
+
+function formatBR(val, decimals = 2) {
+  return Number(val).toLocaleString('pt-BR', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  });
+}
+
+function setMemDiagHypo(hypo) {
+  currentBaseDiagHypo = hypo;
+  document.querySelectorAll('#chipMemCheio, #chipRightCheio').forEach(c => {
+    if (hypo === 'cheio') c.classList.add('active'); else c.classList.remove('active');
+  });
+  document.querySelectorAll('#chipMemVazio, #chipRightVazio').forEach(c => {
+    if (hypo === 'vazio') c.classList.add('active'); else c.classList.remove('active');
+  });
+  drawBaseDiagram();
+}
+
 function switchTab(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1680,9 +1778,107 @@ function switchTab(tab) {
   if (tab === 'elev') {
     document.getElementById('tabBtnElev').classList.add('active');
     document.getElementById('viewElev').classList.add('active');
-  } else {
+  } else if (tab === 'plan') {
     document.getElementById('tabBtnPlan').classList.add('active');
     document.getElementById('viewPlan').classList.add('active');
+  } else if (tab === 'base') {
+    document.getElementById('tabBtnBase').classList.add('active');
+    document.getElementById('viewBase').classList.add('active');
+    drawBaseDiagram();
+  }
+}
+
+function drawBaseDiagram() {
+  const isCheio = (currentBaseDiagHypo === 'cheio');
+  
+  // Parâmetros para os cálculos do diagrama na base
+  const V = parseFloat(document.getElementById('inpVolume').value) || 0;
+  const D = parseFloat(document.getElementById('inpDiametro').value) || 3.18;
+  const H = parseFloat(document.getElementById('inpH').value) || 20;
+  const e_chapa_mm = parseFloat(document.getElementById('inpEspChapa').value) || 6.35;
+  const percAcess = parseFloat(document.getElementById('inpPercAcess').value) || 20;
+  const V0 = parseFloat(document.getElementById('inpV0').value) || 30;
+  const S1 = parseFloat(document.getElementById('inpS1').value) || 1.0;
+  const S2 = parseFloat(document.getElementById('inpS2').value) || 1.02;
+  const S3 = parseFloat(document.getElementById('inpS3').value) || 1.0;
+  const Ca = parseFloat(document.getElementById('inpCa').value) || 0.85;
+  const excPerc = parseFloat(document.getElementById('inpExcPerc').value) || 5.0;
+
+  const P_agua_kN = V * 10.0;
+  const P_agua_tf = P_agua_kN / 10.0;
+  const Alat = Math.PI * D * H;
+  const e_chapa_m = e_chapa_mm / 1000.0;
+  const P_cost_kN = Alat * e_chapa_m * 78.5;
+  const P_acess_kN = P_cost_kN * (percAcess / 100.0);
+  const N_met_kN = P_cost_kN + P_acess_kN;
+  const N_met_tf = N_met_kN / 10.0;
+
+  const Vk = V0 * S1 * S2 * S3;
+  const q_N_m2 = 0.613 * Math.pow(Vk, 2);
+  const q_kPa = q_N_m2 / 1000.0;
+  const Aproj = D * H;
+  const Fv_kN = q_kPa * Ca * Aproj;
+  const Fv_tf = Fv_kN / 10.0;
+
+  const Mv_kNm = Fv_kN * (H / 2.0);
+  const Mv_tfm = Mv_kNm / 10.0;
+
+  const e_acc_m = (excPerc / 100.0) * D;
+  const Me_kNm = e_acc_m * (P_agua_kN + N_met_kN);
+  const Me_tfm = Me_kNm / 10.0;
+
+  const M_tot_kNm = Mv_kNm + Me_kNm;
+  const M_tot_tfm = M_tot_kNm / 10.0;
+
+  let N_tf = isCheio ? (P_agua_tf + N_met_tf) : N_met_tf;
+  let N_kgf = N_tf * 1000.0;
+  let N_kN = isCheio ? (P_agua_kN + N_met_kN) : N_met_kN;
+
+  let H_tf = Fv_tf;
+  let H_kgf = H_tf * 1000.0;
+  let H_kN = Fv_kN;
+
+  let M_tfm = isCheio ? M_tot_tfm : Mv_tfm;
+  let M_kgfm = M_tfm * 1000.0;
+  let M_kNm = isCheio ? M_tot_kNm : Mv_kNm;
+
+  // Gerar SVG reproduzindo exatamente o padrão da imagem 2
+  const svgHtml = `
+    <!-- Título do Diagrama idêntico à imagem de referência -->
+    <text x="24" y="32" font-family="'Bricolage Grotesque', sans-serif" font-size="13" font-weight="800" fill="#1e293b" text-decoration="underline">6 - DIAGRAMA DO CARREGAMENTO A BASE:</text>
+    <text x="24" y="49" font-family="'Bricolage Grotesque', sans-serif" font-size="12" font-weight="700" fill="#475569">PONTUAL ${isCheio ? '(1. TANQUE CHEIO)' : '(3. TANQUE VAZIO)'}</text>
+
+    <!-- Sistema de Forças Pontuais na Base -->
+    <g transform="translate(0, 0)">
+      <!-- Seta Vertical (Normal N_k apontando para baixo) -->
+      <line x1="245" y1="62" x2="245" y2="238" stroke="#1e293b" stroke-width="2.5" />
+      <polygon points="245,245 239,228 251,228" fill="#1e293b" />
+      <text x="330" y="66" font-family="'IBM Plex Mono', monospace" font-size="17" font-weight="800" fill="#1e293b">${formatBR(N_kgf, 2)} kgf</text>
+      <text x="330" y="85" font-family="'IBM Plex Mono', monospace" font-size="11.5" font-weight="600" fill="#64748b">(${N_tf.toFixed(2)} tf | ${N_kN.toFixed(1)} kN)</text>
+
+      <!-- Seta Horizontal (Cortante H_k apontando para a direita) -->
+      <line x1="55" y1="245" x2="238" y2="245" stroke="#1e293b" stroke-width="2.5" />
+      <polygon points="245,245 229,239 229,251" fill="#1e293b" />
+      <text x="145" y="278" font-family="'IBM Plex Mono', monospace" font-size="16" font-weight="800" fill="#1e293b" text-anchor="middle">${formatBR(H_kgf, 2)} kgf</text>
+      <text x="145" y="295" font-family="'IBM Plex Mono', monospace" font-size="11.5" font-weight="600" fill="#64748b" text-anchor="middle">(${H_tf.toFixed(2)} tf | ${H_kN.toFixed(1)} kN)</text>
+
+      <!-- Arco de Momento Fletor de Tombamento (Horário) -->
+      <path d="M 152 215 A 100 100 0 0 1 348 230" fill="none" stroke="#1e293b" stroke-width="3" />
+      <polygon points="348,236 337,222 352,225" fill="#1e293b" />
+      <text x="335" y="278" font-family="'IBM Plex Mono', monospace" font-size="16" font-weight="800" fill="#1e293b">${formatBR(M_kgfm, 2)} kgfm</text>
+      <text x="335" y="295" font-family="'IBM Plex Mono', monospace" font-size="11.5" font-weight="600" fill="#64748b">(${M_tfm.toFixed(2)} tf·m | ${M_kNm.toFixed(1)} kN·m)</text>
+    </g>
+  `;
+
+  const svgMem = document.getElementById('svgMemBaseDiagram');
+  if (svgMem) svgMem.innerHTML = svgHtml;
+
+  const svgRight = document.getElementById('svgRightBase');
+  if (svgRight) svgRight.innerHTML = svgHtml;
+
+  const lblRight = document.getElementById('lblRightBaseCaption');
+  if (lblRight) {
+    lblRight.innerText = `N = ${formatBR(N_kgf, 0)} kgf | H = ${formatBR(H_kgf, 0)} kgf | M = ${formatBR(M_kgfm, 0)} kgfm`;
   }
 }
 
@@ -1963,14 +2159,94 @@ function recalc() {
   document.getElementById('m_as_estaca_min').innerText = As_estaca_min_cm2.toFixed(2);
   document.getElementById('m_l_estaca_txt').innerText = LEstaca.toFixed(1) + " m";
 
-  // Tabela Schiel
+  // Esforços Solicitantes na Base da Torre Metálica (Interface Costado / Bloco)
+  const N_base_cheio_tf = P_agua_tf + N_met_tf;
+  const N_base_cheio_kgf = N_base_cheio_tf * 1000.0;
+  const N_base_cheio_kN = P_agua_kN + N_met_kN;
+
+  const N_base_vazio_tf = N_met_tf;
+  const N_base_vazio_kgf = N_base_vazio_tf * 1000.0;
+  const N_base_vazio_kN = N_met_kN;
+
+  const H_base_tf = Fv_tf;
+  const H_base_kgf = Fv_tf * 1000.0;
+  const H_base_kN = Fv_kN;
+
+  const M_base_cheio_tfm = M_tot_tfm;
+  const M_base_cheio_kgfm = M_tot_tfm * 1000.0;
+  const M_base_cheio_kNm = M_tot_kNm;
+
+  const M_base_vazio_tfm = Mv_tfm;
+  const M_base_vazio_kgfm = Mv_tfm * 1000.0;
+  const M_base_vazio_kNm = Mv_kNm;
+
+  const H_estaca_tf = H_base_tf / nEstacas;
+  const H_estaca_kgf = H_base_kgf / nEstacas;
+
+  // Preencher Tabela Resumo dos Carregamentos à Base
+  const elBaseTbl = document.getElementById('tblBaseLoadsBody');
+  if (elBaseTbl) {
+    elBaseTbl.innerHTML = `
+      <tr>
+        <td><b>1. Força Vertical Axial (Tanque Cheio)</b><br><small>Peso da água (${V} m³) + peso próprio do costado e teto</small></td>
+        <td><b class="mono">N_k,cheio</b></td>
+        <td class="num"><b>${formatBR(N_base_cheio_kgf, 2)} kgf</b></td>
+        <td class="num">${N_base_cheio_tf.toFixed(2)} tf</td>
+        <td class="num">${N_base_cheio_kN.toFixed(1)} kN</td>
+        <td>Carga máxima de compressão vertical na base</td>
+      </tr>
+      <tr>
+        <td><b>2. Força Vertical Axial (Tanque Vazio)</b><br><small>Peso próprio da torre metálica descarregada</small></td>
+        <td><b class="mono">N_k,vazio</b></td>
+        <td class="num"><b>${formatBR(N_base_vazio_kgf, 2)} kgf</b></td>
+        <td class="num">${N_base_vazio_tf.toFixed(2)} tf</td>
+        <td class="num">${N_base_vazio_kN.toFixed(1)} kN</td>
+        <td>Carga mínima de compressão (verificação de alívio)</td>
+      </tr>
+      <tr>
+        <td><b>3. Força Cortante Horizontal na Base</b><br><small>Ação dinâmica de arrasto do vento (NBR 6123)</small></td>
+        <td><b class="mono">H_k (F_v)</b></td>
+        <td class="num"><b>${formatBR(H_base_kgf, 2)} kgf</b></td>
+        <td class="num">${H_base_tf.toFixed(2)} tf</td>
+        <td class="num">${H_base_kN.toFixed(1)} kN</td>
+        <td>Cisalhamento transversal transmitido à fundação</td>
+      </tr>
+      <tr>
+        <td><b>4. Momento Fletor de Tombamento (Cheio)</b><br><small>Braço do vento (H/2) + excentricidade acidental de carga</small></td>
+        <td><b class="mono">M_k,cheio</b></td>
+        <td class="num"><b>${formatBR(M_base_cheio_kgfm, 2)} kgfm</b></td>
+        <td class="num">${M_base_cheio_tfm.toFixed(2)} tf·m</td>
+        <td class="num">${M_base_cheio_kNm.toFixed(1)} kN·m</td>
+        <td>Tombamento crítico máximo atuando na fundação</td>
+      </tr>
+      <tr>
+        <td><b>5. Momento Fletor de Tombamento (Vazio)</b><br><small>Vento atuando na torre sem estabilização gravitacional da água</small></td>
+        <td><b class="mono">M_k,vazio</b></td>
+        <td class="num"><b>${formatBR(M_base_vazio_kgfm, 2)} kgfm</b></td>
+        <td class="num">${M_base_vazio_tfm.toFixed(2)} tf·m</td>
+        <td class="num">${M_base_vazio_kNm.toFixed(1)} kN·m</td>
+        <td>Risco de tração ou arrancamento de estacas</td>
+      </tr>
+      <tr style="background:var(--papel);">
+        <td><b>6. Força Cortante Transversal por Estaca</b><br><small>H_estaca = H_k / n (${nEstacas} estacas)</small></td>
+        <td><b class="mono">H_estaca</b></td>
+        <td class="num"><b style="color:var(--amarelo-d);">${formatBR(H_estaca_kgf, 2)} kgf</b></td>
+        <td class="num">${H_estaca_tf.toFixed(2)} tf</td>
+        <td class="num">${(H_base_kN / nEstacas).toFixed(1)} kN</td>
+        <td>Resistida pelo atrito lateral e flexão das estacas</td>
+      </tr>
+    `;
+  }
+
+  // Tabela Schiel com especificação de reações axiais verticais e cortante por estaca
   let htmlTable = `
     <tr>
-      <td><b>1. Tanque Cheio + Vento + Excentricidade</b><br><small>Máxima solicitação à compressão</small></td>
+      <td><b>1. Tanque Cheio + Vento + Excentricidade</b><br><small>Máxima solicitação à compressão vertical</small></td>
       <td class="num">${N1_tf.toFixed(2)} tf</td>
       <td class="num">${M1_tfm.toFixed(2)} tf·m</td>
       <td class="num"><b>${P1_max_tf.toFixed(2)} tf</b></td>
       <td class="num">${P1_min_tf.toFixed(2)} tf</td>
+      <td class="num">${H_estaca_tf.toFixed(2)} tf</td>
       <td><span class="badge ${P1_max_tf <= Padm_c ? 'ok' : 'alerta'}">${P1_max_tf <= Padm_c ? '● Atende Padm' : '⚠️ Excede Padm'}</span></td>
     </tr>
     <tr>
@@ -1979,6 +2255,7 @@ function recalc() {
       <td class="num">0.00 tf·m</td>
       <td class="num">${P2_max_tf.toFixed(2)} tf</td>
       <td class="num">${P2_min_tf.toFixed(2)} tf</td>
+      <td class="num">0.00 tf</td>
       <td><span class="badge ok">● Uniforme</span></td>
     </tr>
     <tr>
@@ -1987,10 +2264,20 @@ function recalc() {
       <td class="num">${M3_tfm.toFixed(2)} tf·m</td>
       <td class="num">${P3_max_tf.toFixed(2)} tf</td>
       <td class="num"><b>${P3_min_tf.toFixed(2)} tf</b></td>
+      <td class="num">${H_estaca_tf.toFixed(2)} tf</td>
       <td><span class="badge ${P3_min_tf >= 0 ? 'ok' : (Math.abs(P3_min_tf) <= Padm_t ? 'alerta' : 'bad')}">${P3_min_tf >= 0 ? '● Comprimida (Sem Tração)' : (Math.abs(P3_min_tf) <= Padm_t ? '⚠️ Tração < Padm,t (OK)' : '⛔ Tração Excessiva')}</span></td>
     </tr>
   `;
   document.getElementById('tblSchielBody').innerHTML = htmlTable;
+
+  const elHtot = document.getElementById('m_h_tot_txt');
+  if (elHtot) elHtot.innerText = H_base_tf.toFixed(2);
+  const elNest = document.getElementById('m_n_est_txt');
+  if (elNest) elNest.innerText = nEstacas;
+  const elHest = document.getElementById('m_h_per_estaca');
+  if (elHest) elHest.innerText = H_estaca_tf.toFixed(2);
+  const elHestKgf = document.getElementById('m_h_per_estaca_kgf');
+  if (elHestKgf) elHestKgf.innerText = formatBR(H_estaca_kgf, 1);
 
   // Atualizar Cards de Checagem
   // 1. Compressão Máxima
@@ -2062,6 +2349,7 @@ function recalc() {
   // Atualizar Desenhos SVG
   drawElevSvg(D, H, B, hBloco, LEstaca, Fv_kN, M_tot_kNm, isEstaca, nEstacas);
   drawPlanSvg(B, D, coords, diamEstacaM, sEstacas, isEstaca);
+  drawBaseDiagram();
 
   // Labels das abas
   document.getElementById('lblElevInfo').innerText = `H = ${H.toFixed(2)} m | D = ${D.toFixed(2)} m | h_bloco = ${hBloco.toFixed(2)} m`;
