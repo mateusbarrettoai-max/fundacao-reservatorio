@@ -9,31 +9,31 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --preto: #111110;
-  --preto-2: #1b1b19;
-  --preto-card: #242422;
-  --amarelo: #E8B820;
-  --amarelo-d: #c99c12;
-  --amarelo-bg: #fdf8e9;
-  --papel: #f4f2ec;
+  --preto: #282828;
+  --preto-2: #1e2428;
+  --preto-card: #2b3238;
+  --amarelo: #fb6624;
+  --amarelo-d: #ea580c;
+  --amarelo-bg: #fff7ed;
+  --papel: #f8f9fa;
   --papel-2: #ffffff;
-  --tinta: #1a1a18;
-  --tinta-2: #63625b;
-  --tinta-muted: #8c897f;
-  --linha: #e2dfd4;
-  --linha-2: #cdc9bd;
-  --ok: #1c7a45;
-  --ok-bg: #e7f4ec;
-  --ok-bd: #bfe3cd;
-  --alerta: #9a6a05;
-  --alerta-bg: #fbf1d4;
-  --alerta-bd: #ecd58f;
-  --perigo: #b3261e;
-  --perigo-bg: #fce8e6;
-  --perigo-bd: #f5b7b1;
-  --azul-eng: #1e4b7a;
-  --azul-bg: #edf3f8;
-  --sombra: 0 1px 2px rgba(17,17,16,.04), 0 10px 26px rgba(17,17,16,.06);
+  --tinta: #282828;
+  --tinta-2: #4b5563;
+  --tinta-muted: #6b7280;
+  --linha: #e5e7eb;
+  --linha-2: #d1d5db;
+  --ok: #15803d;
+  --ok-bg: #f0fdf4;
+  --ok-bd: #bbf7d0;
+  --alerta: #b45309;
+  --alerta-bg: #fffbeb;
+  --alerta-bd: #fde68a;
+  --perigo: #b91c1c;
+  --perigo-bg: #fef2f2;
+  --perigo-bd: #fecaca;
+  --azul-eng: #1e3a5f;
+  --azul-bg: #f0f4f9;
+  --sombra: 0 1px 3px rgba(0,0,0,.05), 0 10px 24px -4px rgba(0,0,0,.04);
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -55,7 +55,7 @@ a { color: inherit; text-decoration: none; }
 .wrap { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
 
 /* Header Top */
-header.top { background: var(--preto); color: #fff; }
+header.top { background: #ffffff; color: var(--tinta); border-bottom: 1px solid var(--linha); }
 .top-in {
   display: flex;
   align-items: center;
@@ -69,55 +69,78 @@ header.top { background: var(--preto); color: #fff; }
 .logo-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: #232320;
-  border: 1px solid #3c3c36;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid var(--linha);
   border-radius: 8px;
   padding: 6px 12px;
 }
 .logo-icon {
-  width: 22px;
-  height: 22px;
-  background: var(--amarelo);
-  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  background: var(--amarelo); /* #fb6624 */
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
   font-size: 13px;
-  color: var(--preto);
+  color: #ffffff;
 }
-.brand-name { font-weight: 700; font-size: 14px; letter-spacing: .02em; }
-.top-tag {
-  margin-left: auto;
+.brand-name { font-weight: 700; font-size: 14px; letter-spacing: .02em; color: var(--tinta); }
+.top-nav { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.top-hub-link {
   font-size: 12px;
-  color: #9d9b92;
+  font-weight: 600;
+  color: var(--tinta-2);
+  background: var(--papel);
+  border: 1px solid var(--linha);
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.top-hub-link:hover {
+  background: #fff;
+  border-color: var(--amarelo);
+  color: var(--amarelo);
+}
+.top-tag {
+  font-size: 12px;
+  color: var(--tinta-muted);
   text-align: right;
-  letter-spacing: .03em;
+  letter-spacing: .02em;
 }
 .top-tag b { color: var(--amarelo); }
 
 /* Hero Banner */
-.hero { background: var(--preto-2); color: #fff; border-top: 2px solid var(--amarelo); }
+.hero { background: #ffffff; color: var(--tinta); border-bottom: 1px solid var(--linha); }
 .hero-in { padding: 26px 20px 28px; max-width: 1280px; margin: 0 auto; }
 .eyebrow {
-  font-size: 11.5px;
-  letter-spacing: .2em;
+  font-size: 11px;
+  letter-spacing: .15em;
   text-transform: uppercase;
-  color: var(--amarelo);
+  color: var(--amarelo); /* #fb6624 */
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  padding: 3px 10px;
+  border-radius: 6px;
   font-weight: 700;
+  display: inline-block;
 }
 .hero h1 {
-  font-size: clamp(24px, 3.5vw, 38px);
+  font-size: clamp(24px, 3.5vw, 36px);
   font-weight: 800;
-  line-height: 1.1;
-  margin: 8px 0 6px;
+  line-height: 1.15;
+  margin: 12px 0 8px;
+  color: var(--tinta); /* #282828 */
 }
 .hero p {
   margin: 0;
-  color: #c8c6bd;
-  max-width: 78ch;
+  color: var(--tinta-2); /* #4b5563 */
+  max-width: 82ch;
   font-size: 14.5px;
+  line-height: 1.6;
 }
 .hero .badges-bar {
   margin-top: 14px;
@@ -131,13 +154,13 @@ header.top { background: var(--preto); color: #fff; }
   gap: 6px;
   align-items: center;
   font-size: 12px;
-  color: #a9a79e;
-  border: 1px solid #383833;
+  color: var(--tinta-2);
+  border: 1px solid var(--linha);
   padding: 4px 10px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.02);
+  background: var(--papel);
 }
-.hero .tag-chip b { color: #eceada; font-weight: 600; }
+.hero .tag-chip b { color: var(--tinta); font-weight: 600; }
 
 /* Presets Bar */
 .presets-card {
@@ -637,8 +660,13 @@ footer {
         <span class="brand-name">MOURA BARRETTO ENGENHARIA</span>
       </div>
     </div>
-    <div class="top-tag">
-      RESPONSÁVEL: <b>ENG. MATEUS MOURA BARRETTO · CREA-BA 051805952-9</b>
+    <div class="top-nav">
+      <a href="https://mateusbarrettoai-max.github.io/" class="top-hub-link">
+        ← Portal Hub
+      </a>
+      <div class="top-tag">
+        RESPONSÁVEL: <b>ENG. MATEUS MOURA BARRETTO · CREA-BA 051805952-9</b>
+      </div>
     </div>
   </div>
 </header>
