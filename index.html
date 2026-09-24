@@ -330,6 +330,101 @@ header.top { background: #ffffff; color: var(--tinta); border-bottom: 1px solid 
   user-select: none;
 }
 
+/* Modo de Cálculo Geométrico Reativo */
+.geo-calc-box {
+  background: var(--amarelo-bg);
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+.geo-mode-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.geo-mode-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--amarelo-d);
+}
+.geo-mode-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.geo-chip {
+  background: #ffffff;
+  border: 1.5px solid #fed7aa;
+  color: var(--tinta-2);
+  border-radius: 6px;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.geo-chip:hover {
+  border-color: var(--amarelo);
+  color: var(--tinta);
+}
+.geo-chip.active {
+  background: var(--amarelo);
+  border-color: var(--amarelo);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(251, 102, 36, 0.25);
+}
+.geo-info-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+  background: var(--papel);
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 12px;
+}
+.geo-info-item {
+  display: flex;
+  flex-direction: column;
+}
+.geo-info-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--tinta-muted);
+}
+.geo-info-val {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tinta);
+  margin-top: 2px;
+}
+.inputbox.auto-calc {
+  border-color: var(--amarelo);
+  background: #fffbf7;
+}
+.auto-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--amarelo-d);
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  padding: 1px 5px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
 /* Tabs do Desenho SVG */
 .draw-card {
   position: sticky;
@@ -763,12 +858,31 @@ footer {
           <h3>1. Geometria da Torre e Fluido</h3>
           <span class="card-tag">Ações NBR 6120</span>
         </div>
+
+        <!-- Seletor Interativo de Modo de Cálculo Geométrico -->
+        <div class="geo-calc-box">
+          <div class="geo-mode-header">
+            <span class="geo-mode-title">⚡ Modo de Cálculo Geométrico (V ↔ D ↔ H)</span>
+          </div>
+          <div class="geo-mode-chips">
+            <button type="button" class="geo-chip active" id="chipModeDH" onclick="setGeoMode('DH_TO_V')">
+              <span>D + H → Volume</span>
+            </button>
+            <button type="button" class="geo-chip" id="chipModeDV" onclick="setGeoMode('DV_TO_H')">
+              <span>D + Volume → Altura</span>
+            </button>
+            <button type="button" class="geo-chip" id="chipModeManual" onclick="setGeoMode('MANUAL')">
+              <span>Manual / Livre</span>
+            </button>
+          </div>
+        </div>
+
         <div class="field">
-          <label>Volume Útil de Água (V)
+          <label>Volume Útil de Água (V) <span id="badgeVolume" class="auto-badge">⚡ Calculado Auto</span>
             <small>Capacidade nominal reservada</small>
           </label>
-          <div class="inputbox">
-            <input type="number" id="inpVolume" value="160" step="1" oninput="recalc()">
+          <div class="inputbox auto-calc" id="boxVolume">
+            <input type="number" id="inpVolume" value="160" step="1" oninput="onVolumeInput()">
             <span class="unit">m³</span>
           </div>
         </div>
@@ -776,17 +890,26 @@ footer {
           <label>Diâmetro Externo da Coluna (D)
             <small>Diâmetro cilíndrico do costado metálico</small>
           </label>
-          <div class="inputbox">
-            <input type="number" id="inpDiametro" value="3.18" step="0.01" oninput="recalc()">
+          <div class="inputbox" id="boxDiametro">
+            <input type="number" id="inpDiametro" value="3.18" step="0.01" oninput="onDiametroInput()">
             <span class="unit">m</span>
           </div>
         </div>
         <div class="field">
-          <label>Altura do Costado (H)
+          <label>Altura do Costado (H) <span id="badgeH" class="auto-badge" style="display:none;">⚡ Calculado Auto</span>
             <small>Altura total da torre metálica acima da base</small>
           </label>
-          <div class="inputbox">
-            <input type="number" id="inpH" value="21.50" step="0.10" oninput="recalc()">
+          <div class="inputbox" id="boxH">
+            <input type="number" id="inpH" value="21.50" step="0.10" oninput="onHInput()">
+            <span class="unit">m</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Borda Livre / Folga de Teto (Δh)
+            <small>Desnível entre topo do costado e nível d'água útil (0 = cheio 100%)</small>
+          </label>
+          <div class="inputbox" id="boxFolga">
+            <input type="number" id="inpFolgaTeto" value="1.35" step="0.05" oninput="onFolgaInput()">
             <span class="unit">m</span>
           </div>
         </div>
@@ -806,6 +929,26 @@ footer {
           <div class="inputbox">
             <input type="number" id="inpPercAcess" value="20" step="1" oninput="recalc()">
             <span class="unit">%</span>
+          </div>
+        </div>
+
+        <!-- Barra de Resumo Geométrico em Tempo Real -->
+        <div class="geo-info-bar">
+          <div class="geo-info-item">
+            <span class="geo-info-label">Área Base (Ab)</span>
+            <span class="geo-info-val" id="lblGeoArea">7.94 m²</span>
+          </div>
+          <div class="geo-info-item">
+            <span class="geo-info-label">Vol. Total (Vgeo)</span>
+            <span class="geo-info-val" id="lblGeoVolTotal">170.8 m³</span>
+          </div>
+          <div class="geo-info-item">
+            <span class="geo-info-label">Lâmina d'Água</span>
+            <span class="geo-info-val" id="lblGeoHAgua">20.15 m</span>
+          </div>
+          <div class="geo-info-item">
+            <span class="geo-info-label">Massa Líquida</span>
+            <span class="geo-info-val" id="lblGeoMassaAgua">160.0 tf</span>
           </div>
         </div>
       </div>
@@ -1259,6 +1402,7 @@ const PRESETS = {
     volume: 160,
     diametro: 3.18,
     h: 21.50,
+    folgaTeto: 1.35,
     espChapa: 6.35,
     percAcess: 20,
     v0: 30,
@@ -1286,6 +1430,7 @@ const PRESETS = {
     volume: 100,
     diametro: 3.18,
     h: 13.80,
+    folgaTeto: 1.21,
     espChapa: 4.75,
     percAcess: 20,
     v0: 30,
@@ -1313,6 +1458,7 @@ const PRESETS = {
     volume: 143,
     diametro: 3.18,
     h: 21.30,
+    folgaTeto: 3.30,
     espChapa: 6.35,
     percAcess: 20,
     v0: 30,
@@ -1340,6 +1486,7 @@ const PRESETS = {
     volume: 32,
     diametro: 2.20,
     h: 11.20,
+    folgaTeto: 2.78,
     espChapa: 5.0,
     percAcess: 15,
     v0: 30,
@@ -1364,6 +1511,112 @@ const PRESETS = {
 };
 
 let currentTab = 'elev';
+let currentGeoMode = 'DH_TO_V'; // 'DH_TO_V' | 'DV_TO_H' | 'MANUAL'
+
+function setGeoMode(mode) {
+  currentGeoMode = mode;
+  document.querySelectorAll('.geo-chip').forEach(c => c.classList.remove('active'));
+
+  const boxV = document.getElementById('boxVolume');
+  const boxH = document.getElementById('boxH');
+  const bV = document.getElementById('badgeVolume');
+  const bH = document.getElementById('badgeH');
+
+  if (mode === 'DH_TO_V') {
+    document.getElementById('chipModeDH').classList.add('active');
+    if (boxV) boxV.classList.add('auto-calc');
+    if (boxH) boxH.classList.remove('auto-calc');
+    if (bV) bV.style.display = 'inline-block';
+    if (bH) bH.style.display = 'none';
+    syncGeometry();
+  } else if (mode === 'DV_TO_H') {
+    document.getElementById('chipModeDV').classList.add('active');
+    if (boxV) boxV.classList.remove('auto-calc');
+    if (boxH) boxH.classList.add('auto-calc');
+    if (bV) bV.style.display = 'none';
+    if (bH) bH.style.display = 'inline-block';
+    syncGeometry();
+  } else {
+    document.getElementById('chipModeManual').classList.add('active');
+    if (boxV) boxV.classList.remove('auto-calc');
+    if (boxH) boxH.classList.remove('auto-calc');
+    if (bV) bV.style.display = 'none';
+    if (bH) bH.style.display = 'none';
+  }
+}
+
+function syncGeometry() {
+  const D = parseFloat(document.getElementById('inpDiametro').value) || 0;
+  const folga = parseFloat(document.getElementById('inpFolgaTeto').value) || 0;
+  if (D <= 0) return;
+  const Ab = (Math.PI * Math.pow(D, 2)) / 4.0;
+
+  if (currentGeoMode === 'DH_TO_V') {
+    const H = parseFloat(document.getElementById('inpH').value) || 0;
+    const hAgua = Math.max(0, H - folga);
+    const V = Ab * hAgua;
+    const vRounded = Math.round(V * 10) / 10;
+    document.getElementById('inpVolume').value = vRounded.toFixed(1).replace('.0', '');
+  } else if (currentGeoMode === 'DV_TO_H') {
+    const V = parseFloat(document.getElementById('inpVolume').value) || 0;
+    const hAgua = V / Ab;
+    const H = hAgua + folga;
+    document.getElementById('inpH').value = H.toFixed(2);
+  }
+  recalc();
+}
+
+function onDiametroInput() {
+  if (currentGeoMode !== 'MANUAL') {
+    syncGeometry();
+  } else {
+    recalc();
+  }
+}
+
+function onHInput() {
+  if (currentGeoMode === 'DH_TO_V') {
+    syncGeometry();
+  } else if (currentGeoMode === 'DV_TO_H') {
+    const D = parseFloat(document.getElementById('inpDiametro').value) || 0;
+    const folga = parseFloat(document.getElementById('inpFolgaTeto').value) || 0;
+    const H = parseFloat(document.getElementById('inpH').value) || 0;
+    if (D > 0) {
+      const Ab = (Math.PI * Math.pow(D, 2)) / 4.0;
+      const V = Ab * Math.max(0, H - folga);
+      document.getElementById('inpVolume').value = (Math.round(V * 10) / 10).toFixed(1).replace('.0', '');
+    }
+    recalc();
+  } else {
+    recalc();
+  }
+}
+
+function onVolumeInput() {
+  if (currentGeoMode === 'DV_TO_H') {
+    syncGeometry();
+  } else if (currentGeoMode === 'DH_TO_V') {
+    const D = parseFloat(document.getElementById('inpDiametro').value) || 0;
+    const folga = parseFloat(document.getElementById('inpFolgaTeto').value) || 0;
+    const V = parseFloat(document.getElementById('inpVolume').value) || 0;
+    if (D > 0) {
+      const Ab = (Math.PI * Math.pow(D, 2)) / 4.0;
+      const H = (V / Ab) + folga;
+      document.getElementById('inpH').value = H.toFixed(2);
+    }
+    recalc();
+  } else {
+    recalc();
+  }
+}
+
+function onFolgaInput() {
+  if (currentGeoMode !== 'MANUAL') {
+    syncGeometry();
+  } else {
+    recalc();
+  }
+}
 
 function loadPreset(key) {
   const p = PRESETS[key];
@@ -1377,6 +1630,9 @@ function loadPreset(key) {
   document.getElementById('inpVolume').value = p.volume;
   document.getElementById('inpDiametro').value = p.diametro;
   document.getElementById('inpH').value = p.h;
+  if (p.folgaTeto !== undefined) {
+    document.getElementById('inpFolgaTeto').value = p.folgaTeto;
+  }
   document.getElementById('inpEspChapa').value = p.espChapa;
   document.getElementById('inpPercAcess').value = p.percAcess;
   document.getElementById('inpV0').value = p.v0;
@@ -1614,6 +1870,20 @@ function recalc() {
   // Armadura da Estaca
   const Ac_estaca_cm2 = (Math.PI * Math.pow(diamEstacaCm, 2)) / 4.0;
   const As_estaca_min_cm2 = 0.004 * Ac_estaca_cm2; // 0.4% Ac
+
+  // Atualizar Resumo Geométrico no Card 1
+  const folgaTeto = parseFloat(document.getElementById('inpFolgaTeto').value) || 0;
+  const hAgua = Math.max(0, H - folgaTeto);
+  const V_geo = Ab * H;
+
+  const elArea = document.getElementById('lblGeoArea');
+  if (elArea) elArea.innerText = Ab.toFixed(2) + " m²";
+  const elVolTot = document.getElementById('lblGeoVolTotal');
+  if (elVolTot) elVolTot.innerText = V_geo.toFixed(1) + " m³";
+  const elHAgua = document.getElementById('lblGeoHAgua');
+  if (elHAgua) elHAgua.innerText = hAgua.toFixed(2) + " m";
+  const elMassaAgua = document.getElementById('lblGeoMassaAgua');
+  if (elMassaAgua) elMassaAgua.innerText = (V * 1.0).toFixed(1) + " tf";
 
   // Atualizar Valores na Memória de Cálculo
   document.getElementById('m_d1').innerText = D.toFixed(2);
