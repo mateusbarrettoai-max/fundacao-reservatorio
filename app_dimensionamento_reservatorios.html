@@ -112,6 +112,20 @@ header.top { background: #ffffff; color: var(--tinta); border-bottom: 1px solid 
   letter-spacing: .02em;
 }
 .top-tag b { color: var(--amarelo); }
+.save-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--ok-bg);
+  border: 1px solid var(--ok-bd);
+  color: var(--ok);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  letter-spacing: .02em;
+}
 
 /* Hero Banner */
 .hero { background: #ffffff; color: var(--tinta); border-bottom: 1px solid var(--linha); }
@@ -756,6 +770,7 @@ footer {
       </div>
     </div>
     <div class="top-nav">
+      <span id="saveStatusIndicator" class="save-status-badge" style="display:none;" title="Suas alterações estão salvas neste dispositivo e navegador">💾 Salvo no navegador</span>
       <a href="https://mateusbarrettoai-max.github.io/" class="top-hub-link">
         ← Portal Hub
       </a>
@@ -1591,7 +1606,7 @@ const PRESETS = {
 let currentTab = 'elev';
 let currentGeoMode = 'DH_TO_V'; // 'DH_TO_V' | 'DV_TO_H' | 'MANUAL'
 
-function setGeoMode(mode) {
+function setGeoMode(mode, triggerSync = true) {
   currentGeoMode = mode;
   document.querySelectorAll('.geo-chip').forEach(c => c.classList.remove('active'));
 
@@ -1601,25 +1616,29 @@ function setGeoMode(mode) {
   const bH = document.getElementById('badgeH');
 
   if (mode === 'DH_TO_V') {
-    document.getElementById('chipModeDH').classList.add('active');
+    const chip = document.getElementById('chipModeDH');
+    if (chip) chip.classList.add('active');
     if (boxV) boxV.classList.add('auto-calc');
     if (boxH) boxH.classList.remove('auto-calc');
     if (bV) bV.style.display = 'inline-block';
     if (bH) bH.style.display = 'none';
-    syncGeometry();
+    if (triggerSync) syncGeometry();
   } else if (mode === 'DV_TO_H') {
-    document.getElementById('chipModeDV').classList.add('active');
+    const chip = document.getElementById('chipModeDV');
+    if (chip) chip.classList.add('active');
     if (boxV) boxV.classList.remove('auto-calc');
     if (boxH) boxH.classList.add('auto-calc');
     if (bV) bV.style.display = 'none';
     if (bH) bH.style.display = 'inline-block';
-    syncGeometry();
+    if (triggerSync) syncGeometry();
   } else {
-    document.getElementById('chipModeManual').classList.add('active');
+    const chip = document.getElementById('chipModeManual');
+    if (chip) chip.classList.add('active');
     if (boxV) boxV.classList.remove('auto-calc');
     if (boxH) boxH.classList.remove('auto-calc');
     if (bV) bV.style.display = 'none';
     if (bH) bH.style.display = 'none';
+    if (triggerSync) recalc();
   }
 }
 
@@ -1737,17 +1756,119 @@ function loadPreset(key) {
   showToast("Preset carregado: " + p.name);
 }
 
-function restoreDefaults() {
-  loadPreset('DPT160');
+const STORAGE_KEY = 'mb_reservatorio_state_v1';
+let isRestoringState = false;
+
+function saveState() {
+  if (isRestoringState) return;
+  try {
+    const ids = [
+      'inpVolume', 'inpDiametro', 'inpH', 'inpFolgaTeto', 'inpEspChapa', 'inpPercAcess',
+      'inpV0', 'inpS1', 'inpS2', 'inpS3', 'inpCa', 'inpExcPerc',
+      'selTipoFun', 'selNumEstacas', 'inpDiamEstaca', 'inpEspacEstacas', 'inpComprEstaca',
+      'inpLadoBloco', 'inpHBloco', 'inpCobrimento', 'inpFck', 'inpFyk',
+      'inpPadmC', 'inpPadmT', 'inpSigmaAdm'
+    ];
+    const data = {
+      values: {},
+      geoMode: currentGeoMode,
+      tab: currentTab,
+      diagHypo: currentBaseDiagHypo,
+      timestamp: Date.now()
+    };
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) data.values[id] = el.value;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    updateSaveIndicator(true);
+  } catch (e) {
+    console.warn('Erro ao salvar no localStorage:', e);
+  }
 }
 
-function onTipoFunChange() {
+function loadSavedState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (!data || !data.values) return false;
+
+    isRestoringState = true;
+
+    // Restaurar valores dos campos
+    for (const [id, val] of Object.entries(data.values)) {
+      const el = document.getElementById(id);
+      if (el && val !== undefined && val !== null) {
+        el.value = val;
+      }
+    }
+
+    // Modo geométrico sem disparar recálculo que sobrescreva os inputs restaurados
+    if (data.geoMode) {
+      setGeoMode(data.geoMode, false);
+    }
+
+    // Hipótese do diagrama na base (cheio / vazio)
+    if (data.diagHypo) {
+      currentBaseDiagHypo = data.diagHypo;
+      document.querySelectorAll('#chipMemCheio, #chipRightCheio').forEach(c => {
+        if (data.diagHypo === 'cheio') c.classList.add('active'); else c.classList.remove('active');
+      });
+      document.querySelectorAll('#chipMemVazio, #chipRightVazio').forEach(c => {
+        if (data.diagHypo === 'vazio') c.classList.add('active'); else c.classList.remove('active');
+      });
+    }
+
+    // Aba ativa
+    if (data.tab) {
+      switchTab(data.tab, false);
+    }
+
+    onTipoFunChange(false);
+    isRestoringState = false;
+    updateSaveIndicator(true);
+    return true;
+  } catch (e) {
+    console.warn('Erro ao carregar do localStorage:', e);
+    isRestoringState = false;
+    return false;
+  }
+}
+
+function clearSavedState() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    updateSaveIndicator(false);
+  } catch (e) {
+    console.warn('Erro ao limpar localStorage:', e);
+  }
+}
+
+function updateSaveIndicator(saved) {
+  const ind = document.getElementById('saveStatusIndicator');
+  if (!ind) return;
+  if (saved) {
+    ind.innerHTML = `💾 Salvo no navegador`;
+    ind.style.display = 'inline-flex';
+  } else {
+    ind.style.display = 'none';
+  }
+}
+
+function restoreDefaults() {
+  clearSavedState();
+  loadPreset('DPT160');
+  showToast("Padrão DPT 160 m³ restaurado!");
+}
+
+function onTipoFunChange(triggerRecalc = true) {
   const tipo = document.getElementById('selTipoFun').value;
   const isEstaca = (tipo === 'estaca');
   document.getElementById('grpEstacas').style.display = isEstaca ? 'block' : 'none';
   document.getElementById('grpGeotEstaca').style.display = isEstaca ? 'block' : 'none';
   document.getElementById('grpGeotRasa').style.display = isEstaca ? 'none' : 'block';
-  recalc();
+  if (triggerRecalc) recalc();
 }
 
 let currentBaseDiagHypo = 'cheio'; // 'cheio' | 'vazio'
@@ -1768,9 +1889,10 @@ function setMemDiagHypo(hypo) {
     if (hypo === 'vazio') c.classList.add('active'); else c.classList.remove('active');
   });
   drawBaseDiagram();
+  saveState();
 }
 
-function switchTab(tab) {
+function switchTab(tab, triggerSave = true) {
   currentTab = tab;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.draw-view').forEach(v => v.classList.remove('active'));
@@ -1786,6 +1908,7 @@ function switchTab(tab) {
     document.getElementById('viewBase').classList.add('active');
     drawBaseDiagram();
   }
+  if (triggerSave) saveState();
 }
 
 function drawBaseDiagram() {
@@ -2358,6 +2481,9 @@ function recalc() {
   // Labels das abas
   document.getElementById('lblElevInfo').innerText = `H = ${H.toFixed(2)} m | D = ${D.toFixed(2)} m | h_bloco = ${hBloco.toFixed(2)} m`;
   document.getElementById('lblPlanInfo').innerText = `Bloco ${B.toFixed(2)} × ${B.toFixed(2)} m | ${nEstacas} Estacas Ø${diamEstacaCm} cm`;
+
+  // Salvar estado atualizado no localStorage
+  saveState();
 }
 
 // Renderização do SVG da Elevação da Torre
@@ -2606,6 +2732,10 @@ window.addEventListener('DOMContentLoaded', () => {
   const pe = document.getElementById('printDate');
   if (pe) pe.innerText = dtStr;
 
+  const restored = loadSavedState();
+  if (!restored) {
+    onTipoFunChange();
+  }
   recalc();
 });
 </script>
